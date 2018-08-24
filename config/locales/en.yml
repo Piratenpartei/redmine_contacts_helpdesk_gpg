@@ -23,8 +23,8 @@ en:
   label_gpg_action_encrypt: Encrypt
   label_gpg_action_both: Sign&Encrypt
 
+  label_pgpkey: GPG key
   label_no_key: (nothing)
-  label_gpg_key: GPG key
   label_gpg_key_password: GPG password
   label_gpg_filter_name: Name
   label_gpg_filter_privatekeysonly: Only private keys

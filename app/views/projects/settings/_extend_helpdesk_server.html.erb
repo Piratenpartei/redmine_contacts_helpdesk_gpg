@@ -2,7 +2,7 @@
 <div style="display: none;">
 <span id="gpg_extension_outgoing">
 	<p>
-		<label><%= l(:label_gpg_key) %></label>
+		<label><%= l(:label_pgpkey) %></label>
 		<%= select_tag :gpg_sign_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.private_keys_select_options, HelpdeskSettings[:gpg_sign_key, @project.id])).html_safe %>
 	</p>
 	<p>
@@ -23,7 +23,7 @@
 <div style="display: none;">
 <span id="gpg_extension_incoming">
 	<p>
-		<label><%= l(:label_gpg_key) %></label>
+		<label><%= l(:label_pgpkey) %></label>
 		<%= select_tag :gpg_decrypt_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.private_keys_select_options, HelpdeskSettings[:gpg_decrypt_key, @project.id])).html_safe %>
 	</p>
 	<p>

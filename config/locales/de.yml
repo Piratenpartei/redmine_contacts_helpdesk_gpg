@@ -23,8 +23,8 @@ de:
   label_gpg_action_encrypt: Verschlüsseln
   label_gpg_action_both: Signieren&Verschlüsseln
 
+  label_pgpkey: GPG Schlüssel
   label_no_key: (keine Auswahl)
-  label_gpg_key: GPG Schlüssel
   label_gpg_key_password: GPG Passwort
   label_gpg_filter_name: Name
   label_gpg_filter_privatekeysonly: Nur private Schlüssel
