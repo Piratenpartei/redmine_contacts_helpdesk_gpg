@@ -42,7 +42,7 @@
 			<td class="<%= key_image(key) %> <%=key_trust(key) %>"><%= key.subkeys[0].length %><%= key.subkeys[0].pubkey_algo_letter %>/<%= key.subkeys[0].fingerprint[-8 .. -1] %></td>
 			<td><%= key_to_string(key) %></td>
 			<td class="buttons">
-				<%= delete_link gpgkeys_path('delete/' + key.subkeys[0].fingerprint, :back_url => gpgkeys_path(params)) %>
+				<%= delete_link gpgkeys_path(id: key.subkeys[0].fingerprint, :back_url => gpgkeys_path(params)) %>
 			</td>
 		</tr>
 	<% end -%>
@@ -51,8 +51,8 @@
 <% end %>	
 </div>
 
-<p class="pagination">
+<span class="pagination">
 	<%= pagination_links_full @key_pages, @key_count %>
-</p>
+</span>
 
 <% html_title(l(:label_gpg_keystore)) -%>

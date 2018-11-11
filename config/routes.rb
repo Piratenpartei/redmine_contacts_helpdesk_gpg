@@ -8,6 +8,5 @@ match 'gpgkeys/', :to => 'gpgkeys#index', via: [:get, :post]
 match 'gpgkeys/all', :to => 'gpgkeys#index', via: [:get, :post]
 match 'gpgkeys/new', :to => 'gpgkeys#create', via: [:get, :post]
 match 'gpgkeys/filter', :to => 'gpgkeys#index', via: [:get, :post]
-match 'gpgkeys.delete/:id', :to => 'gpgkeys#destroy', via: [:get, :post]
 
 resource :gpgkeys
