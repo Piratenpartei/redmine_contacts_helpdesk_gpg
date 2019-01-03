@@ -2,11 +2,12 @@
 
 == Requirements
 
-* Redmine 2.3+
-* RedmineCRM's Contacts plugin (pro or light)
-* RedmineCRM's Helpdesk plugin (pro)
+* Redmine 2.6+
+* CRM plugin from RedmineUP (Version 4.x or higher)
+* Helpdesk plugin from RedmineUP(Version 4.x or higher)
 
-This plugin does not provide a (licensed) copy of RedmineCRM's plugins. Please get your own. :)
+This plugin does not provide (licensed) copies of RedmineUP's plugins. Please get your own. :)
+If you still want to use older versions of the Helpdesk plugin (when it still was called "RedmineCRM Helpdesk plugin") then have a look at version 0.0.7 of this plugin.
 
 == Installation
 
@@ -14,9 +15,8 @@ This plugin does not provide a (licensed) copy of RedmineCRM's plugins. Please g
 
 Install these packages
 
-* gnupg_1.4.xx
-* optional: gpgsm (on some OS bundled with gnupg)
-* libgpgme11-dev (Name may vary depending on OS. It's the package providing executable 'gpgme-config'. For Debian this is libgpgme-dev)
+* gnupg (Make sure it's version of gpg is at least 2.1)
+* libgpgme-dev (It's the package providing executable 'gpgme-config'. Name may vary depending on OS.)
 
 === Install required GEMs
 

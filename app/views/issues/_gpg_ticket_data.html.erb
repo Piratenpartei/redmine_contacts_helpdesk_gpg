@@ -16,7 +16,7 @@
 			var _ss = $(this).children("span");
 			if (_ss.length > 0) {
 				var _s = _ss[0];
-				var _t = $(this).prev().children("span")[0];
+				var _t = $(this).next().children("span")[0];
 				$(_t).attr("class", $(_s).attr("class"));
 			}
 		});

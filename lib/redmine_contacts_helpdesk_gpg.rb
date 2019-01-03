@@ -1,6 +1,7 @@
 Rails.configuration.to_prepare do
-  require 'patches/helpdeskmailer_patch'
-  require 'patches/helpdeskcontroller_patch'
+	require 'patches/helpdesk_mail_messenger_patch'
+  require 'patches/helpdesk_mail_container_patch'
+  require 'patches/helpdesk_controller_patch'
   require 'patches/issue_patch'
   require 'patches/journal_patch'
 end
@@ -9,6 +10,7 @@ end
 require 'hooks/view_issues_hook'
 require 'hooks/view_layouts_hook'
 require 'hooks/view_journals_hook'
+require 'hooks/issues_controller_hook'
 
 module HelpDeskGPG
 
