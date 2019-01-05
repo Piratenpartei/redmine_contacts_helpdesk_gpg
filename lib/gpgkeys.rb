@@ -44,16 +44,17 @@ class GpgKeys
 	end
 	
 	def self.removeKey(fingerprint)
-		_key = GPGME::Key.get(fingerprint)
-		if _key 
+		_ctx = self.newContext
+		_key = _ctx.get_key(fingerprint)
+		if _key
 			# Rails.logger.info "Gpgkeys#destroy found: #{_key.primary_uid.uid}"
-			_key.delete!(true)
+			_ctx.delete_key(_key, true)
 		end
 	end
 
 	# refresh all keys in keystore from public key server
 	def self.refresh_keys
-		_ctx = GPGME::Ctx.new()
+		_ctx = self.newContext
 		_keys = _ctx.keys(nil, false)
 		for _key in _keys
 			begin
@@ -70,11 +71,11 @@ class GpgKeys
 	# remove expired keys from keystore
 	def self.remove_expired_keys
 		_cnt = 0
-		_ctx = GPGME::Ctx.new()
+		_ctx = self.newContext
 		_keys = _ctx.keys(nil, false)
 		for _key in _keys
 			if self.keyExpiredOrRevoked(_key)
-				_key.delete!(true)
+				_ctx.delete_key(_key, true)
 				_cnt += 1
 			end
 		end
@@ -82,10 +83,14 @@ class GpgKeys
 		return _cnt
 	end # remove_expired_keys
 
-	## private 
+	## private
+
+	def self.newContext
+		GPGME::Ctx.new({:pinentry_mode => GPGME::PINENTRY_MODE_LOOPBACK})
+	end
 
 	def self.find_all_keys
-		_ctx = GPGME::Ctx.new()
+		_ctx = self.newContext
 		_keys = _ctx.keys(nil, false)
 		@@sec_fingerprints = []
 		_sec = _ctx.keys(nil, true)

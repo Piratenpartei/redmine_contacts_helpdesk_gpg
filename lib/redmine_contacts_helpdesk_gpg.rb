@@ -17,14 +17,18 @@ module HelpDeskGPG
 	def self.settings() Setting[:plugin_redmine_contacts_helpdesk_gpg] ? Setting[:plugin_redmine_contacts_helpdesk_gpg] : {} end
 
 	def self.keyrings_dir
-		self.settings[:gpg_keyrings_dir]
+		self.settings['gpg_keyrings_dir']
 	end
 
 	def self.keyserver
-		self.settings[:gpg_keyserver]
+		self.settings['gpg_keyserver']
 	end
 
 	class Helper
+
+		def self.newContext
+			GPGME::Ctx.new(:pinentry_mode => GPGME::PINENTRY_MODE_LOOPBACK)
+		end
 
 		def self.engineInfos
 			_res = []
@@ -47,7 +51,7 @@ module HelpDeskGPG
 		def self.keystoresizeP(proto) ### test: get values according to protocol
 			ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
 			GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-			_ctx = GPGME::Ctx.new({:protocol => proto})
+			_ctx = GPGME::Ctx.new({:pinentry_mode => GPGME::PINENTRY_MODE_LOOPBACK, :protocol => proto})
 			_pub = _ctx.keys(nil, false)
 			_priv = _ctx.keys(nil, true)
 			_ctx.release

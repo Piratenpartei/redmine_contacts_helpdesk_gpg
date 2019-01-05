@@ -1,3 +1,5 @@
+<% if @issue.tracker_id.to_s == HelpdeskSettings[:helpdesk_tracker, @project.id] %>
+
 <script type="text/javascript" charset="utf-8">
 
 	var checkedGPGKeys = new Object();
@@ -62,8 +64,14 @@
 	function setupCheckForTags() {
 		// hook onto the select2 items and add handler for adding/removing items
 		$([$('#helpdesk_to'), $('#helpdesk_cc'), $('#helpdesk_bcc')]).each(function() {
-			$(this).on('change', function () {
+			$(this).on('select2:select', function () {
 				showTagsGPGHint($(this), isGPGEncryptionEnabled());
+			});
+			$(this).on('select2:unselect', function () {
+				var _cc_list = $(this);
+				setTimeout(function () {
+					showTagsGPGHint(_cc_list, isGPGEncryptionEnabled());
+				}, 500);
 			});
 		});
 	}
@@ -88,3 +96,5 @@
 		(0x<%=HelpDeskGPG::Helper.shortenFingerprint(HelpdeskSettings[:gpg_sign_key, @project.id]) %>)
 	<% end %>
 </div>
+
+<% end %>

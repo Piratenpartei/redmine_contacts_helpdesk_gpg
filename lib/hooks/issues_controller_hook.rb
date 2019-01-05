@@ -4,6 +4,9 @@ module RedmineHelpdeskGPG
     @journals = {}
 
     def self.prepareJournal(issue, journal, params)
+      if params.nil?
+        return
+      end
       if params[:gpg_do_encrypt] || params[:gpg_do_sign]
         item = GpgJournal.new
         item.was_signed = params[:gpg_do_sign]
