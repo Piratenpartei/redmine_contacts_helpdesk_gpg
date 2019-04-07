@@ -17,9 +17,13 @@ module RedmineHelpdeskGPG
           unloadable # Send unloadable so it will not be unloaded in development
 
           # incoming mail; check for gpg encryption/signature prior to handling mail by helpdesk
-          alias_method_chain :initialize, :gpg
+          alias_method :initialize_without_gpg, :initialize
+          alias_method :initialize, :initialize_with_gpg
+
           # incoming mail; create journal entries etc.
-          alias_method_chain :dispatch, :gpg
+          alias_method :dispatch_without_gpg, :dispatch
+          alias_method :dispatch, :dispatch_with_gpg
+
         end
       end # self.included
 

@@ -16,7 +16,9 @@ module RedmineHelpdeskGPG
           unloadable # Send unloadable so it will not be unloaded in development
 
           # add settings for gpg encryption/signature to prepared email
-          alias_method_chain :prepare_email, :gpg
+          alias_method :prepare_email_without_gpg, :prepare_email
+          alias_method :prepare_email, :prepare_email_with_gpg
+
         end
       end # self.included
 

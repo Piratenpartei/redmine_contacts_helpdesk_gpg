@@ -9,9 +9,11 @@ module RedmineHelpdeskGPG
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
 
-          # store also settings for gpg encryption/signature
-          alias_method_chain :set_settings, :gpg
-          alias_method_chain :set_settings_param, :gpg
+          alias_method :set_settings_without_gpg, :set_settings
+          alias_method :set_settings, :set_settings_with_gpg
+
+          alias_method :set_settings_param_without_gpg, :set_settings_param
+          alias_method :set_settings_param, :set_settings_param_with_gpg
         end
       end # self.included
 
