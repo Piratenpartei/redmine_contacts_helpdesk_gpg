@@ -1,4 +1,4 @@
-class CreateGpgJournals < ActiveRecord::Migration
+class CreateGpgJournals < Rails.version < '5.2' ? ActiveRecord::Migration : ActiveRecord::Migration[4.2]
   def change
     create_table :gpg_journals do |t|
       t.references :issue
