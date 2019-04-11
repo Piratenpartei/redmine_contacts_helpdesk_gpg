@@ -3,32 +3,30 @@ namespace :redmine do
     namespace :helpdesk_gpg do
       require_dependency File.dirname(__FILE__) + '/../gpgkeys.rb'
 
-      desc <<-END_DESC.strip_heredoc
-   Update all keys in keystore from public keyserver
+      desc <<-DESCRIPTION
+      Update all keys in keystore from public keyserver
 
-   Examples:
-
-     rake redmine:plugins:helpdesk_gpg:refresh_keys RAILS_ENV="production"
-      END_DESC
+      Examples:
+        rake redmine:plugins:helpdesk_gpg:refresh_keys RAILS_ENV="production"
+      DESCRIPTION
 
       task refresh_keys: :environment do
-        GpgKeys.initGPG
-        _k = GpgKeys.find_all_keys
-        puts "found #{_k.count} keys"
+        GpgKeys.init_gpg
+        keys = GpgKeys.find_all_keys
+        puts "found #{keys.count} keys"
         GpgKeys.refresh_keys
         puts 'done...'
       end
 
-      desc <<-END_DESC.strip_heredoc
-   Remove all expired keys from keystore
+      desc <<-DESCRIPTION
+      Remove all expired keys from keystore
 
-   Examples:
-
-     rake redmine:plugins:helpdesk_gpg:remove_expired_keys RAILS_ENV="production"
-      END_DESC
+      Examples:
+        rake redmine:plugins:helpdesk_gpg:remove_expired_keys RAILS_ENV="production"
+      DESCRIPTION
 
       task remove_expired_keys: :environment do
-        GpgKeys.initGPG
+        GpgKeys.init_gpg
         GpgKeys.remove_expired_keys
       end
     end

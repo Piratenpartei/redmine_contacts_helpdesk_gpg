@@ -13,16 +13,22 @@ require 'hooks/view_journals_hook'
 require 'hooks/issues_controller_hook'
 
 module HelpDeskGPG
-  def self.settings
-    Setting[:plugin_redmine_contacts_helpdesk_gpg] || {}
-end
+  class << self
+    def settings
+      ActionController::Parameters.new(Setting[:plugin_redmine_contacts_helpdesk_gpg])
+    end
 
-  def self.keyrings_dir
-    settings['gpg_keyrings_dir']
-  end
+    def setting?(value)
+      Additionals.true?(settings[value])
+    end
 
-  def self.keyserver
-    settings['gpg_keyserver']
+    def keyrings_dir
+      settings[:gpg_keyrings_dir]
+    end
+
+    def keyserver
+      settings[:gpg_keyserver]
+    end
   end
 
   class Helper

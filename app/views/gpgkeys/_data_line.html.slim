@@ -1,0 +1,17 @@
+tr class="{cycle('odd', 'even')}"
+  td class="#{key_image(key)} #{key_trust(key)}"
+    = render_gpg_subkey(key.subkeys[0])
+  td
+    - subkeys = subkeys_from_key(key)
+
+    = render_expired_key(key.subkeys[0])
+    - key.instance_variable_get(:@uids).each do |user_id|
+      br
+      = "uid #{user_id.name.force_encoding(Encoding::UTF_8)} <#{user_id.email.force_encoding(Encoding::UTF_8)}>"
+    - subkeys.each do |subkey|
+      br
+      = "sub #{render_gpg_subkey(subkey)} #{render_expired_key(subkey)}"
+  td.buttons
+    = delete_link(gpgkey_path(key.subkeys[0].fingerprint),
+                  class: 'icon icon-del',
+                  title: l(:button_delete))

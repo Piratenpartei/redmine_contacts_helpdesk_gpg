@@ -1,0 +1,46 @@
+.contextual
+  = link_to l(:label_key_new), new_gpgkey_path, class: 'icon icon-add'
+  = link_to l(:label_keys_refresh), refresh_gpgkeys_path, class: 'icon icon-reload'
+  = link_to l(:label_keys_remove_expired), expired_gpgkeys_path, class: 'icon icon-del'
+
+- html_title(l(:label_gpg_keystore))
+
+h2 =l(:label_gpg_keystore)
+
+= form_tag(gpgkeys_path('filter'), method: :get) do
+  fieldset
+    legend
+      = l(:label_filter_plural)
+    label[for="secretonly"]
+      = l(:label_gpg_filter_privatekeysonly)
+      | :
+    = check_box_tag 'secretonly', params[:secretonly], params[:secretonly]
+    br
+    label[for="expiredonly"]
+      = l(:label_gpg_filter_expiredkeysonly)
+      | :
+    = check_box_tag 'expiredonly', params[:expiredonly], params[:expiredonly]
+    br
+    label[for="name"]
+      = l(:label_gpg_filter_name)
+      | :
+    = text_field_tag 'name', params[:name], size: 30
+    = submit_tag l(:button_apply), class: 'small', name: nil
+    = link_to l(:button_clear), gpgkeys_path, class: 'icon icon-reload'
+|   
+.autoscroll
+  - if @keys.empty?
+    p.nodata
+      = l(:label_no_data)
+  - else
+    table#gpgkeys.list
+      thead
+        tr
+          th =l(:label_key_uid)
+          th =l(:label_key_details)
+          th
+      tbody
+        = render partial: 'data_line', collection: @keys[@offset, @limit], as: :key
+
+span.pagination
+  = pagination_links_full @key_pages, @key_count

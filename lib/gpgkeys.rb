@@ -1,21 +1,21 @@
 class GpgKeys
-  def self.initGPG
+  def self.init_gpg
     ENV.delete('GPG_AGENT_INFO') # this interfers otherwise with our tests
     ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
     GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
     @@hkp = Hkp.new(HelpDeskGPG.keyserver)
 
-    Rails.logger.info "Gpgkeys#initGPG using key rings in: #{HelpDeskGPG.keyrings_dir}"
-    Rails.logger.info "Gpgkeys#initGPG using key server: #{HelpDeskGPG.keyserver}"
+    Rails.logger.info "Gpgkeys#init_gpg using key rings in: #{HelpDeskGPG.keyrings_dir}"
+    Rails.logger.info "Gpgkeys#init_gpg using key server: #{HelpDeskGPG.keyserver}"
   end
 
   def self.visible(params)
-    _keys = if params[:format].present? && (params[:format] == 'filter')
-              filter_keys(params)
-            else
-              find_all_keys
-            end
-    _keys
+    keys = if params[:format].present? && params[:format] == 'filter'
+             filter_keys(params)
+           else
+             find_all_keys
+           end
+    keys
   end
 
   def self.sec_fingerprints
@@ -23,64 +23,61 @@ class GpgKeys
   end
 
   def self.import_keys(params)
-    _cnt_pub_old = GPGME::Key.find(:public).length
-    _cnt_priv_old = GPGME::Key.find(:secret).length
+    cnt_pub_old = GPGME::Key.find(:public).length
+    cnt_priv_old = GPGME::Key.find(:secret).length
 
     if params[:attachments]
       # Rails.logger.info "Gpgkeys#import has attachments"
       params[:attachments].each do |_id, descr|
-        _attached = Attachment.find_by(token: descr['token'])
-        if _attached
-          GPGME::Key.import(File.open(_attached.diskfile))
-          _attached.delete_from_disk
+        attached = Attachment.find_by(token: descr['token'])
+        if attached
+          GPGME::Key.import(File.open(attached.diskfile))
+          attached.delete_from_disk
         end
       end
     end
 
-    _cnt_pub_new = GPGME::Key.find(:public).length - _cnt_pub_old
-    _cnt_priv_new = GPGME::Key.find(:secret).length - _cnt_priv_old
-    [_cnt_pub_new, _cnt_priv_new]
+    cnt_pub_new = GPGME::Key.find(:public).length - cnt_pub_old
+    cnt_priv_new = GPGME::Key.find(:secret).length - cnt_priv_old
+    [cnt_pub_new, cnt_priv_new]
   end
 
-  def self.removeKey(fingerprint)
-    _ctx = newContext
-    _key = _ctx.get_key(fingerprint)
-    if _key
-      # Rails.logger.info "Gpgkeys#destroy found: #{_key.primary_uid.uid}"
-      _ctx.delete_key(_key, true)
-    end
+  def self.remove_key(fingerprint)
+    key = GPGME::Key.get(fingerprint)
+    key.delete!(true) if key
   end
 
   # refresh all keys in keystore from public key server
   def self.refresh_keys
-    _ctx = newContext
-    _keys = _ctx.keys(nil, false)
-    _keys.each do |_key|
+    ctx = GPGME::Ctx.new
+    keys = ctx.keys(nil, false)
+    keys.each do |key|
       begin
-        Rails.logger.info "Gpgkeys#refresh_key #{_key.fingerprint} <#{_key.email}>"
-        @@hkp.fetch_and_import(_key.fingerprint)
-      rescue StandardError # catch OpenURI::HTTPError 404 for keys not on key server
-        Rails.logger.info "Gpgkeys#refresh_key caught error on #{_key.fingerprint}"
+        Rails.logger.info "Gpgkeys#refresh_key #{key.fingerprint} <#{key.email}>"
+        @@hkp.fetch_and_import(key.fingerprint)
+      rescue StandardError
+        # catch OpenURI::HTTPError 404 for keys not on key server
+        Rails.logger.info "Gpgkeys#refresh_key caught error on #{key.fingerprint}"
         next
       end
     end
-    _ctx.release
-  end # refresh_keys
+    ctx.release
+  end
 
   # remove expired keys from keystore
   def self.remove_expired_keys
-    _cnt = 0
-    _ctx = newContext
-    _keys = _ctx.keys(nil, false)
-    _keys.each do |_key|
-      if keyExpiredOrRevoked(_key)
-        _ctx.delete_key(_key, true)
-        _cnt += 1
+    cnt = 0
+    ctx = GPGME::Ctx.new
+    keys = ctx.keys(nil, false)
+    keys.each do |key|
+      if key_expired_or_revoked(key)
+        key.delete!(true)
+        cnt += 1
       end
     end
-    Rails.logger.info "Gpgkeys#remove_expired_keys removed #{_cnt} keys"
-    _cnt
-  end # remove_expired_keys
+    Rails.logger.info "Gpgkeys#remove_expired_keys removed #{cnt} keys"
+    cnt
+  end
 
   ## private
 
