@@ -77,7 +77,7 @@ module RedmineHelpdeskGPG
             _receivers += options[:to_address].split(',') if options[:to_address]
             _receivers += options[:cc_address].split(',') if options[:cc_address]
             _receivers += options[:bcc_address].split(',') if options[:bcc_address]
-            _missing_keys = GpgKeys.missingKeysForEncryption(_receivers)
+            _missing_keys = GpgKeys.missing_keys_for_encryption(_receivers)
             if _missing_keys.empty? # all keys are available :)
               _gpg_options[:encrypt] = true
             else

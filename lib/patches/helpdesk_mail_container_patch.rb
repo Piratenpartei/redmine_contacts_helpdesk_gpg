@@ -48,7 +48,7 @@ module RedmineHelpdeskGPG
             # _myLogger.info "receive_with_gpg: message signed by: #{_decrypted.signatures.map{|sig|sig.from}.join("\n")}" unless _myLogger.nil?
             the_email = Mail.new(_decrypted)
           elsif the_email.signed?
-            _have_key = GpgKeys.checkAndOptionallyImportKey(_sender_email)
+            _have_key = GpgKeys.check_and_optionally_import_key(_sender_email)
             if _have_key
               _verified = the_email.verify
               # _myLogger.info "receive_with_gpg: signature(s) valid: #{_verified.signature_valid?}" unless _myLogger.nil?

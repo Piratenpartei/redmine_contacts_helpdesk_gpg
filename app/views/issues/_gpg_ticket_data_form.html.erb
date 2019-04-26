@@ -4,13 +4,13 @@
 <div style="display:none;">
     <div id="helpdesk_send_response_gpg_new">
         <div id="helpdesk_send_response_gpg_encrypted">
-            <%= check_box_tag 'helpdesk[gpg_do_encrypt]', 1, HelpDeskGPG::Helper.sendMailEncryptedByDefault(@project) %>
+            <%= check_box_tag 'helpdesk[gpg_do_encrypt]', 1, HelpDeskGPG::Helper.send_mail_encrypted_by_default(@project) %>
             <label for="gpg_do_encrypt"><%= l(:label_gpg_do_encrypt) %></label>
         </div>
         <% unless HelpdeskSettings[:gpg_sign_key, @project].blank? %>
         <div id="helpdesk_send_response_gpg_signed">
-            <%= check_box_tag 'helpdesk[gpg_do_sign]', 1, HelpDeskGPG::Helper.sendMailSignedByDefault(@project) %>
-            <%= label_tag :gpg_do_sign, l(:label_gpg_do_sign) %>(0x<%=HelpDeskGPG::Helper.shortenFingerprint(HelpdeskSettings[:gpg_sign_key, @project.id]) %>)
+            <%= check_box_tag 'helpdesk[gpg_do_sign]', 1, HelpDeskGPG::Helper.send_mail_signed_by_default(@project) %>
+            <%= label_tag :gpg_do_sign, l(:label_gpg_do_sign) %>(0x<%=HelpDeskGPG::Helper.shorten_fingerprint(HelpdeskSettings[:gpg_sign_key, @project.id]) %>)
         </div>
         <% end %>
     </div>

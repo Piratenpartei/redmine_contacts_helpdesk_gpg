@@ -3,7 +3,7 @@ require_dependency 'helpdesk_controller'
 module RedmineHelpdeskGPG
   module Patches
     module HelpdeskControllerPatch
-      def self.included(base) # :nodoc:
+      def self.included(base)
         base.send(:include, InstanceMethods)
 
         base.class_eval do
@@ -15,7 +15,7 @@ module RedmineHelpdeskGPG
           alias_method :set_settings_param_without_gpg, :set_settings_param
           alias_method :set_settings_param, :set_settings_param_with_gpg
         end
-      end # self.included
+      end
 
       module InstanceMethods
         def set_settings_with_gpg
@@ -28,19 +28,19 @@ module RedmineHelpdeskGPG
           set_settings_param(:gpg_send_default_action)
 
           set_settings_without_gpg # call original method
-        end # def set_settings_gpg
+        end
 
         def set_settings_param_with_gpg(param)
-          if param == :gpg_decrypt_key_password || param == :gpg_sign_key_password
+          if %i[gpg_decrypt_key_password gpg_sign_key_password].include?(param)
             ContactsSetting[param, @project.id] = params[param] if params[param] && params[param].present?
           else
             set_settings_param_without_gpg(param)
           end
-        end # set_settings_param_with_gpg
-      end # module InstanceMethods
-    end # module HelpdeskControllerPatch
-  end # module Patches
-end # module RedmineHelpdeskGPG
+        end
+      end
+    end
+  end
+end
 
 unless HelpdeskController.included_modules.include?(RedmineHelpdeskGPG::Patches::HelpdeskControllerPatch)
   HelpdeskController.send(:include, RedmineHelpdeskGPG::Patches::HelpdeskControllerPatch)

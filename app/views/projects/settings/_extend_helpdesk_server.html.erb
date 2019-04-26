@@ -3,7 +3,7 @@
 <span id="gpg_extension_outgoing">
 	<p>
 		<label><%= l(:label_gpg_key) %></label>
-		<%= select_tag :gpg_sign_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.privateKeysSelectOptions, HelpdeskSettings[:gpg_sign_key, @project.id])).html_safe %>
+		<%= select_tag :gpg_sign_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.private_keys_select_options, HelpdeskSettings[:gpg_sign_key, @project.id])).html_safe %>
 	</p>
 	<p>
 		<label><%= l(:label_gpg_key_password) %></label>
@@ -14,7 +14,7 @@
 	</p>
     <p>
         <label><%= l(:label_gpg_action) %></label>
-        <%= select_tag :gpg_send_default_action, options_for_select(HelpDeskGPG::Helper.sendDefaultsSelectOptions, HelpdeskSettings[:gpg_send_default_action, @project.id]) %> </p>
+        <%= select_tag :gpg_send_default_action, options_for_select(HelpDeskGPG::Helper.send_defaults_select_options, HelpdeskSettings[:gpg_send_default_action, @project.id]) %> </p>
     </p>
 </span>
 </div>
@@ -24,7 +24,7 @@
 <span id="gpg_extension_incoming">
 	<p>
 		<label><%= l(:label_gpg_key) %></label>
-		<%= select_tag :gpg_decrypt_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.privateKeysSelectOptions, HelpdeskSettings[:gpg_decrypt_key, @project.id])).html_safe %>
+		<%= select_tag :gpg_decrypt_key, ("<option value=\"\">#{l(:label_no_key)}</option>" + options_for_select(HelpDeskGPG::Helper.private_keys_select_options, HelpdeskSettings[:gpg_decrypt_key, @project.id])).html_safe %>
 	</p>
 	<p>
 		<label><%= l(:label_gpg_key_password) %></label>

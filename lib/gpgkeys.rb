@@ -81,122 +81,122 @@ class GpgKeys
 
   ## private
 
-  def self.newContext
+  def self.new_context
     GPGME::Ctx.new(pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
   end
 
   def self.find_all_keys
-    _ctx = newContext
-    _keys = _ctx.keys(nil, false)
+    ctx = new_context
+    keys = ctx.keys(nil, false)
     @@sec_fingerprints = []
-    _sec = _ctx.keys(nil, true)
-    _sec.each do |key|
+    sec = ctx.keys(nil, true)
+    sec.each do |key|
       @@sec_fingerprints.push(key.subkeys[0].fingerprint)
     end
-    _ctx.release
-    _keys
-  end # find_all_keys
+    ctx.release
+    keys
+  end
 
   def self.filter_keys(params)
     # Rails.logger.debug "Gpgkeys filter_keys (name='#{params[:name]}', secret='#{params[:secretonly]}', expired='#{params[:expiredonly]}')"
-    _all_keys = find_all_keys
-    _result = []
+    all_keys = find_all_keys
+    result = []
     if params[:name]
-      _all_keys.each do |key|
-        _found = false
+      all_keys.each do |key|
+        found = false
         key.instance_variable_get(:@uids).each do |uid|
           next unless uid.name.downcase.include?(params[:name].downcase) || uid.email.downcase.include?(params[:name].downcase)
 
-          _result.push(key)
-          _found = true
+          result.push(key)
+          found = true
           break
         end
-        next unless _found && params[:secretonly]
-
-        _result.delete(key) unless @@sec_fingerprints.include? key.subkeys[0].fingerprint
+        if found && params[:secretonly]
+          result.delete(key) unless @@sec_fingerprints.include?(key.subkeys[0].fingerprint)
+        end
       end
     elsif params[:secretonly]
-      _all_keys.each do |key|
-        _result.push(key) if @@sec_fingerprints.include? key.subkeys[0].fingerprint
+      all_keys.each do |key|
+        result.push(key) if @@sec_fingerprints.include? key.subkeys[0].fingerprint
       end
     end
 
     if params[:expiredonly]
-      _temp = _all_keys
-      _temp = _result if params[:name] || params[:secretonly]
-      _result = []
-      _temp.each do |key|
-        _result.push(key) if keyExpiredOrRevoked(key)
+      temp = all_keys
+      temp = result if params[:name] || params[:secretonly]
+      result = []
+      temp.each do |key|
+        result.push(key) if key_expired_or_revoked(key)
       end
     end
 
-    _result
-  end # filter_keys
+    result
+  end
 
-  def self.keyExpiredOrRevoked(_key)
-    _key.expired || _key.subkeys[0].trust == :revoked
-  end # keyExpiredOrRevoked
+  def self.key_expired_or_revoked(key)
+    key.expired || key.subkeys[0].trust == :revoked
+  end
 
-  def self.checkAndOptionallyImportKey(_mailaddress)
-    # check existence of key for '_mailaddress'. Return a boolean whether we found it
-    _keys = GPGME::Key.find(:public, _mailaddress)
-    if _keys.empty?
-      # logger.info "checkAndOptionallyImportKey: Doing hkp lookup for key '#{_mailaddress}'"
-      _found = @@hkp.search(_mailaddress)
-      if _found
-        _found.each do |result|
-          _keyid = result[0]
-          _key = @@hkp.fetch_and_import(_keyid)
+  # check existence of key for 'mail_address'. Return a boolean whether we found it
+  def self.check_and_optionally_import_key(mail_address)
+    keys = GPGME::Key.find(:public, mail_address)
+    if keys.empty?
+      # logger.info "check_and_optionally_import_key: Doing hkp lookup for key '#{mail_address}'"
+      found = @@hkp.search(mail_address)
+      if found
+        found.each do |result|
+          keyid = result[0]
+          _key = @@hkp.fetch_and_import(keyid)
         end
       end
-      _keys = GPGME::Key.find(:public, _mailaddress)
+      keys = GPGME::Key.find(:public, mail_address)
     end
-    !_keys.empty?
-  rescue Exception ## probably key not found or some other error while retrieving data from hkp
+    keys.present?
+  rescue StandardError
+    # probably key not found or some other error while retrieving data from hkp
     false
-  end # def checkAndOptionallyImportKey
+  end
 
-  def self.missingKeysForEncryption(_receivers)
-    # collect any key from list '_receivers' which we cannot encrypt to
-    _missing = []
-    _receivers.each do |r|
-      _missing.push(r) unless hasKeyForEncryption?(r)
+  def self.missing_keys_for_encryption(receivers)
+    # collect any key from list 'receivers' which we cannot encrypt to
+    missing = []
+    receivers.each do |r|
+      missing.push(r) unless key_for_encryption?(r)
     end
-    _missing
-  end # def missingKeysForEncryption
+    missing
+  end
 
-  def self.hasKeyForEncryption?(_mailaddress)
+  def self.key_for_encryption?(mailaddress)
     # already in store?
-    return true if exactKeyAvailable?(_mailaddress, :encrypt)
+    return true if exact_key_available?(mailaddress, :encrypt)
 
     # nope. Lookup from key server
-    getKeyFromKeyServer(_mailaddress)
+    key_from_keyserver(mailaddress)
     # now in store?
-    exactKeyAvailable?(_mailaddress, :encrypt)
-  end # def hasKeyForEncryption?
+    exact_key_available?(mailaddress, :encrypt)
+  end
 
-  def self.exactKeyAvailable?(_mailaddress, purpose)
+  def self.exact_key_available?(mailaddress, purpose)
     # lookup a key from store and check if its usable for 'purpose'
-    _keys = GPGME::Key.find(:public, _mailaddress, [purpose])
-    _keys.each do |_key|
-      _key.uids.each do |_uid|
-        return true if _uid.email.casecmp(_mailaddress).zero?
+    keys = GPGME::Key.find(:public, mailaddress, [purpose])
+    keys.each do |key|
+      key.uids.each do |uid|
+        return true if uid.email.casecmp(mailaddress)
       end
     end
     false
-  end # def exactKeyAvailable?
+  end
 
-  def self.getKeyFromKeyServer(_mailaddress)
-    # lookup key from keyserver and import into store if found
-
-    _found = @@hkp.search(_mailaddress)
-    if _found
-      _found.each do |result|
-        _keyid = result[0]
-        @@hkp.fetch_and_import(_keyid)
+  # lookup key from keyserver and import into store if found
+  def self.key_from_keyserver(mailaddress)
+    found = @@hkp.search(mailaddress)
+    if found
+      found.each do |result|
+        keyid = result[0]
+        @@hkp.fetch_and_import(keyid)
       end
     end
   rescue StandardError # catch OpenURI::HTTPError 404 for keys not on key server
-    Rails.logger.info "Gpgkeys#getKeyFromKeyServer caught error on #{_mailaddress}"
-  end # def getKeyFromKeyServer
+    Rails.logger.info "Gpgkeys#key_from_keyserver caught error on #{mailaddress}"
+  end
 end

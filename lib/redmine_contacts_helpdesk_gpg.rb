@@ -36,61 +36,58 @@ module HelpDeskGPG
       GPGME::Ctx.new(pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
     end
 
-    def self.engineInfos
-      _res = []
+    def self.engine_infos
+      res = []
       GPGME::Engine.info.each do |inf|
-        _res.push("protocol='#{inf.instance_variable_get(:@protocol)}', @file_name='#{inf.instance_variable_get(:@file_name)}', @version='#{inf.instance_variable_get(:@version)}'")
+        res.push("protocol='#{inf.instance_variable_get(:@protocol)}',
+                  @file_name='#{inf.instance_variable_get(:@file_name)}',
+                  @version='#{inf.instance_variable_get(:@version)}'")
       end
-      _res
-    end # self.engineInfos
+      res
+    end
 
     def self.keystoresize
       ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
       GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-      _ctx = GPGME::Ctx.new
-      _pub = _ctx.keys(nil, false)
-      _priv = _ctx.keys(nil, true)
-      _ctx.release
-      [_pub.length, _priv.length]
-    end # self.keystoresize
+      ctx = GPGME::Ctx.new
+      pub = ctx.keys(nil, false)
+      priv = ctx.keys(nil, true)
+      ctx.release
 
-    def self.keystoresizeP(proto) ### test: get values according to protocol
-      ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
-      GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-      _ctx = GPGME::Ctx.new(pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK, protocol: proto)
-      _pub = _ctx.keys(nil, false)
-      _priv = _ctx.keys(nil, true)
-      _ctx.release
-      [_pub.length, _priv.length]
+      [pub.length, priv.length]
     end
 
-    def self.privateKeysSelectOptions
-      _priv = GPGME::Key.find(:secret)
-      _options = []
-      _priv.each do |k|
-        _label = "0x#{k.primary_subkey.fingerprint[-8..-1]} &lt;#{k.primary_uid.email}&gt;".html_safe
-        _options.push([_label, k.primary_subkey.fingerprint])
+    def self.private_keys_select_options
+      priv = GPGME::Key.find(:secret)
+      options = []
+      priv.each do |k|
+        label = "0x#{k.primary_subkey.fingerprint[-8..-1]} &lt;#{k.primary_uid.email}&gt;".html_safe
+        options.push([label, k.primary_subkey.fingerprint])
       end
-      _options
-    end # self.privateKeysSelectOptions
+      options
+    end
 
-    def self.shortenFingerprint(fpr)
+    def self.shorten_fingerprint(fpr)
       fpr[-8..-1]
-    end # self.shortenFingerprint
+    end
 
-    def self.sendDefaultsSelectOptions
+    def self.project_fingerprint(project)
+      "0x#{HelpDeskGPG::Helper.shorten_fingerprint(HelpdeskSettings[:gpg_sign_key, project.id])})"
+    end
+
+    def self.send_defaults_select_options
       [[(I18n.translate :label_no_key), ''],
        [(I18n.translate :label_gpg_action_sign), '1'],
        [(I18n.translate :label_gpg_action_encrypt), '2'],
        [(I18n.translate :label_gpg_action_both), '3']]
-    end # sendDefaultsSelectOptions
+    end
 
-    def self.sendMailSignedByDefault(project)
+    def self.send_mail_signed_by_default(project)
       HelpdeskSettings[:gpg_send_default_action, project.id].to_i & 1 > 0
-    end # sendMailSignedByDefault
+    end
 
-    def self.sendMailEncryptedByDefault(project)
+    def self.send_mail_encrypted_by_default(project)
       HelpdeskSettings[:gpg_send_default_action, project.id].to_i & 2 > 0
-    end # sendMailEncryptedByDefault
-  end # class Helper
-end # module HelpDeskGPG
+    end
+  end
+end
