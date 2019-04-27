@@ -22,11 +22,11 @@
 <br />
 <p>
   <%= setting_label(:gpg_keyrings_dir) %>
-  <%= text_field_tag "settings[gpg_keyrings_dir]", @settings['gpg_keyrings_dir'], :size => "98%" %>
+  <%= text_field_tag "settings[gpg_keyrings_dir]", @settings[:gpg_keyrings_dir], :size => "98%" %>
 </p>
 <p>
   <%= setting_label(:gpg_keyserver) %>
-  <%= text_field_tag "settings[gpg_keyserver]", @settings['gpg_keyserver'], :size => "98%" %>
+  <%= text_field_tag "settings[gpg_keyserver]", @settings[:gpg_keyserver], :size => "98%" %>
 </p>
 
 <% html_title(l(:label_settings), l(:label_ggp_setting)) -%>
