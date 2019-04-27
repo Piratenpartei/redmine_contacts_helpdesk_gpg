@@ -29,7 +29,7 @@ class GpgKeys
     if params[:attachments]
       # Rails.logger.info "Gpgkeys#import has attachments"
       params[:attachments].each do |_id, descr|
-        attached = Attachment.find_by(token: descr['token'])
+        attached = Attachment.find_by_token(descr['token'])
         if attached
           GPGME::Key.import(File.open(attached.diskfile))
           attached.delete_from_disk
