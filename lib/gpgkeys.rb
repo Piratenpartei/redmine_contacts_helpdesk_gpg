@@ -167,12 +167,6 @@ class GpgKeys
   end
 
   def self.key_for_encryption?(mailaddress)
-    # already in store?
-    return true if exact_key_available?(mailaddress, :encrypt)
-
-    # nope. Lookup from key server
-    key_from_keyserver(mailaddress)
-    # now in store?
     exact_key_available?(mailaddress, :encrypt)
   end
 
