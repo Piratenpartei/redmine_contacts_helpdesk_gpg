@@ -1,18 +1,15 @@
-require 'redmine'
-
 Rails.logger.info 'Starting GPG Helper Plugin for RedmineUP\'s Helpdesk Plugin'
 
 # Plugin definition
 Redmine::Plugin.register :redmine_contacts_helpdesk_gpg do
-  name 'Redmine Contacts Helpdesk GPG plugin'
-  author 'darkstarSH'
+  name 'Redmine Contacts Helpdesk GPG'
+  author 'darkstarSH / Alphanodes GmbH / Tobias Stenzel'
   description 'This is a plugin for Redmine to use GPG signing/encryption in RedmineUP\'s helpdesk'
-  version '0.0.9'
-  url 'https://github.com/darkstarSH'
-  author_url 'mailto:gpg_helpdesk@piepgras.name'
+  version '0.3.0'
+  url 'https://github.com/piratenpartei/redmine_contacts_helpdesk_gpg'
 
-  requires_redmine version_or_higher: '2.6'
-  requires_redmine_plugin :redmine_contacts, version_or_higher: '4.1.0'
+  requires_redmine version_or_higher: '3.4'
+  requires_redmine_plugin :redmine_contacts, version_or_higher: '4.2.1'
   requires_redmine_plugin :redmine_contacts_helpdesk, version_or_higher: '4.0.0'
 
   settings default: {
