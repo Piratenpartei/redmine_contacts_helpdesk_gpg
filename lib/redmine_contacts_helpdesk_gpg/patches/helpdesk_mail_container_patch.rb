@@ -4,7 +4,7 @@ require 'gpgkeys'
 require_dependency 'helpdesk_mail_container'
 require_dependency 'redmine_contacts_helpdesk_gpg'
 
-module RedmineHelpdeskGPG
+module RedmineContactsHelpdeskGpg
   module Patches
     module HelpdeskMailContainerPatch
       CONTAINER_ACCESSORS = %i[issue is_new_issue].freeze
@@ -23,7 +23,6 @@ module RedmineHelpdeskGPG
           # incoming mail; create journal entries etc.
           alias_method :dispatch_without_gpg, :dispatch
           alias_method :dispatch, :dispatch_with_gpg
-
         end
       end # self.included
 
@@ -87,11 +86,7 @@ module RedmineHelpdeskGPG
             item.save
           end
         end
-      end # module InstanceMethods
-    end # module HelpdeskMailContainerPatch
-  end # module Patches
-end # module RedmineHelpdeskGPG
-
-unless HelpdeskMailContainer.included_modules.include?(RedmineHelpdeskGPG::Patches::HelpdeskMailContainerPatch)
-  HelpdeskMailContainer.send(:include, RedmineHelpdeskGPG::Patches::HelpdeskMailContainerPatch)
+      end
+    end
+  end
 end

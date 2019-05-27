@@ -1,3 +1,5 @@
+require 'redmine_contacts_helpdesk_gpg'
+
 Rails.logger.info 'Starting GPG Helper Plugin for RedmineUP\'s Helpdesk Plugin'
 
 # Plugin definition
@@ -20,4 +22,8 @@ Redmine::Plugin.register :redmine_contacts_helpdesk_gpg do
   menu :admin_menu, :gpg_keystore, { controller: 'gpgkeys', action: 'index' }, caption: :label_gpg_keystore, param: nil, html: { class: 'icon' }
 end
 
-require 'redmine_contacts_helpdesk_gpg'
+if ActiveRecord::Base.connection.table_exists?(:settings)
+  Rails.configuration.to_prepare do
+    HelpDeskGPG.setup
+  end
+end

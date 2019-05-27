@@ -1,6 +1,6 @@
 require_dependency 'helpdesk_controller'
 
-module RedmineHelpdeskGPG
+module RedmineContactsHelpdeskGpg
   module Patches
     module HelpdeskControllerPatch
       def self.included(base)
@@ -40,8 +40,4 @@ module RedmineHelpdeskGPG
       end
     end
   end
-end
-
-unless HelpdeskController.included_modules.include?(RedmineHelpdeskGPG::Patches::HelpdeskControllerPatch)
-  HelpdeskController.send(:include, RedmineHelpdeskGPG::Patches::HelpdeskControllerPatch)
 end

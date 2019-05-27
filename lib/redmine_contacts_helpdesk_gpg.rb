@@ -1,16 +1,4 @@
-Rails.configuration.to_prepare do
-  require 'patches/helpdesk_mail_messenger_patch'
-  require 'patches/helpdesk_mail_container_patch'
-  require 'patches/helpdesk_controller_patch'
-  require 'patches/issue_patch'
-  require 'patches/journal_patch'
-end
-
 # require_dependency 'gpgkeys'
-require 'hooks/view_issues_hook'
-require 'hooks/view_layouts_hook'
-require 'hooks/view_journals_hook'
-require 'hooks/issues_controller_hook'
 
 module HelpDeskGPG
   class << self
@@ -28,6 +16,22 @@ module HelpDeskGPG
 
     def keyserver
       settings[:gpg_keyserver]
+    end
+
+    def setup
+      # Patches
+      Additionals.patch(%w[HelpdeskMailContainer 
+                           HelpdeskMailMessenger
+                           HelpdeskController
+                           Issue
+                           Journal], 'redmine_contacts_helpdesk_gpg')
+
+      # Hooks
+      require_dependency 'hooks/view_issues_hook'
+      require_dependency 'hooks/view_layouts_hook'
+      require_dependency 'hooks/view_journals_hook'
+      require_dependency 'hooks/issues_controller_hook'
+
     end
   end
 

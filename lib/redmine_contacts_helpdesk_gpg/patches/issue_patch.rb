@@ -1,4 +1,4 @@
-module RedmineHelpdeskGPG
+module RedmineContactsHelpdeskGpg
   module Patches
     module IssuePatch
       def self.included(base)
@@ -16,8 +16,4 @@ module RedmineHelpdeskGPG
       end
     end
   end
-end
-
-unless Issue.included_modules.include?(RedmineHelpdeskGPG::Patches::IssuePatch)
-  Issue.send(:include, RedmineHelpdeskGPG::Patches::IssuePatch)
 end

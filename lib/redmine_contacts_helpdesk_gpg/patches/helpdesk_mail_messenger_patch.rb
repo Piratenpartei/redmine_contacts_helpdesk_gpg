@@ -4,7 +4,7 @@ require 'gpgkeys'
 require_dependency 'helpdesk_mail_messenger'
 require_dependency 'redmine_contacts_helpdesk_gpg'
 
-module RedmineHelpdeskGPG
+module RedmineContactsHelpdeskGpg
   module Patches
     module HelpdeskMailMessengerPatch
       attr_writer :email
@@ -18,7 +18,6 @@ module RedmineHelpdeskGPG
           # add settings for gpg encryption/signature to prepared email
           alias_method :prepare_email_without_gpg, :prepare_email
           alias_method :prepare_email, :prepare_email_with_gpg
-
         end
       end # self.included
 
@@ -92,11 +91,7 @@ module RedmineHelpdeskGPG
           end
           _gpg_options
         end
-      end # module InstanceMethods
-    end # module HelpdeskMailMessengerPatch
-  end # module Patches
-end # module RedmineHelpdeskGPG
-
-unless HelpdeskMailMessenger.included_modules.include?(RedmineHelpdeskGPG::Patches::HelpdeskMailMessengerPatch)
-  HelpdeskMailMessenger.send(:include, RedmineHelpdeskGPG::Patches::HelpdeskMailMessengerPatch)
+      end
+    end
+  end
 end

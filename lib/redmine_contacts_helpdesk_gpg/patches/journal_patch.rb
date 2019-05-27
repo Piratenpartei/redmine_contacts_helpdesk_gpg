@@ -1,4 +1,4 @@
-module RedmineHelpdeskGPG
+module RedmineContactsHelpdeskGpg
   module Patches
     module JournalPatch
       def self.included(base) # :nodoc:
@@ -20,8 +20,4 @@ module RedmineHelpdeskGPG
       end
     end
   end
-end
-
-unless Journal.included_modules.include?(RedmineHelpdeskGPG::Patches::JournalPatch)
-  Journal.send(:include, RedmineHelpdeskGPG::Patches::JournalPatch)
 end
