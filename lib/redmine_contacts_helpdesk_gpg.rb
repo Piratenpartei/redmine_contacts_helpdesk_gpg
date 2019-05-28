@@ -37,7 +37,7 @@ module HelpDeskGPG
   end
 
   class Helper
-    def self.newContext
+    def self.new_context
       GPGME::Ctx.new(pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
     end
 
@@ -54,7 +54,7 @@ module HelpDeskGPG
     def self.keystoresize
       ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
       GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-      ctx = GPGME::Ctx.new
+      ctx = new_context
       pub = ctx.keys(nil, false)
       priv = ctx.keys(nil, true)
       ctx.release
