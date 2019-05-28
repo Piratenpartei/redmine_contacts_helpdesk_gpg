@@ -79,8 +79,8 @@ module RedmineContactsHelpdeskGpg
           if @gpg_received_options[:signed] || @gpg_received_options[:encrypted]
             # logger.info "saveGpgJournal: Creating GpgJournal for #{ref.class}(#{ref.id}): s:#{options[:signed]},e:#{options[:encrypted]}"
             item = GpgJournal.new
-            item.was_signed = @gpg_received_options[:signed]
-            item.was_encrypted = @gpg_received_options[:encrypted]
+            item.signed = @gpg_received_options[:signed]
+            item.encrypted = @gpg_received_options[:encrypted]
             item.issue = ref if ref.instance_of?(Issue)
             item.journal = ref if ref.instance_of?(Journal)
             item.save

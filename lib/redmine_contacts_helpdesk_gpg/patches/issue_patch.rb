@@ -4,15 +4,19 @@ module RedmineContactsHelpdeskGpg
       def self.included(base)
         base.send(:include, InstanceMethods)
         base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-          has_one :gpg_journal, dependent: :destroy # declare relation to gpg_journal
+          has_one :gpg_journal, dependent: :destroy
           accepts_nested_attributes_for :gpg_journal
         end
       end
 
       module InstanceMethods
-        # any instance methods we want to add?
-        # if not: also delete "base.send(:include, InstanceMethods)"
+        def gpg_signed?
+          gpg_journal && gpg_journal.signed?
+        end
+
+        def gpg_encrypted?
+          gpg_journal && gpg_journal.encrypted?
+        end
       end
     end
   end

@@ -33,6 +33,10 @@ de:
   label_gpg_do_sign: Signiere Mail mit
   label_gpg_do_encrypt: Verschlüssele Mail
 
+  label_gpg_signed: signiert
+  label_gpg_encrypted: verschlüsselt
+  label_gpg_signed_encrypted: signiert und verschlüsselt
+
   msg_gpg_keys_updated: Schlüssel wurden aktualisiert.
   msg_gpg_keys_imported: "Es wurden %{pub} öffentliche und %{priv} private Schlüssel importiert."
   msg_gpg_keys_expired: "%{cnt} abgelaufene Schlüssel wurden entfernt."

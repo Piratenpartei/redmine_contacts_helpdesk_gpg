@@ -1,21 +1,20 @@
 module RedmineContactsHelpdeskGpg
   module Patches
     module JournalPatch
-      def self.included(base) # :nodoc:
+      def self.included(base)
         base.send(:include, InstanceMethods)
         base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-          has_one :gpg_journal, dependent: :destroy # declare relation to gpg_journal
+          has_one :gpg_journal, dependent: :destroy
         end
       end
 
       module InstanceMethods
-        def was_signed?
-          gpg_journal && gpg_journal.was_signed?
+        def gpg_signed?
+          gpg_journal && gpg_journal.signed?
         end
 
-        def was_encrypted?
-          gpg_journal && gpg_journal.was_encrypted?
+        def gpg_encrypted?
+          gpg_journal && gpg_journal.encrypted?
         end
       end
     end

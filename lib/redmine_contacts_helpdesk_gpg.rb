@@ -26,10 +26,11 @@ module HelpDeskGPG
                            Issue
                            Journal], 'redmine_contacts_helpdesk_gpg')
 
+      IssuesController.send :helper, GpgIssuesHelper
+
       # Hooks
       require_dependency 'hooks/view_issues_hook'
       require_dependency 'hooks/view_layouts_hook'
-      require_dependency 'hooks/view_journals_hook'
       require_dependency 'hooks/issues_controller_hook'
 
     end

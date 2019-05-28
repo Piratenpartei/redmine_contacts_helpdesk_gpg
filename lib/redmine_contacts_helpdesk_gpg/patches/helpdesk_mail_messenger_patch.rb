@@ -70,7 +70,7 @@ module RedmineContactsHelpdeskGpg
           _gpg_options = {}
           return _gpg_options if gpg_journal.nil?
 
-          if gpg_journal.was_encrypted
+          if gpg_journal.encrypted?
             # do we have keys for all recipients?
             _receivers = []
             _receivers += options[:to_address].split(',') if options[:to_address]
@@ -80,11 +80,11 @@ module RedmineContactsHelpdeskGpg
             if _missing_keys.empty? # all keys are available :)
               _gpg_options[:encrypt] = true
             else
-              gpg_journal.was_encrypted = false
+              gpg_journal.encrypted = false
               raise MailHandler::MissingInformation, "Cannot encrypt message. No public key for #{_missing_keys}"
             end
           end
-          if gpg_journal.was_signed ## shall we sign the message?
+          if gpg_journal.signed? ## shall we sign the message?
             _gpg_options[:sign_as] = HelpdeskSettings[:gpg_sign_key, project]
             _gpg_options[:password] = HelpdeskSettings[:gpg_sign_key_password, project]
             _gpg_options[:pinentry_mode] = GPGME::PINENTRY_MODE_LOOPBACK
