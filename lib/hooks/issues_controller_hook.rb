@@ -7,8 +7,8 @@ module RedmineHelpdeskGPG
 
       if params[:gpg_do_encrypt] || params[:gpg_do_sign]
         item = GpgJournal.new
-        item.signed = params[:gpg_do_sign]
-        item.encrypted = params[:gpg_do_encrypt]
+        item.signed = params[:gpg_do_sign] == '1'
+        item.encrypted = params[:gpg_do_encrypt] == '1'
         item.journal = journal
         @journals[issue.id] = item
       end

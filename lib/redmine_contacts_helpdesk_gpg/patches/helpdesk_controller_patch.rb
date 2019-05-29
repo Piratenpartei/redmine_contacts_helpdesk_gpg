@@ -7,8 +7,6 @@ module RedmineContactsHelpdeskGpg
         base.send(:include, InstanceMethods)
 
         base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-
           alias_method :set_settings_without_gpg, :set_settings
           alias_method :set_settings, :set_settings_with_gpg
 

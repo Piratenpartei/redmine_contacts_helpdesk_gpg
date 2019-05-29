@@ -13,8 +13,6 @@ module RedmineContactsHelpdeskGpg
         base.send(:include, InstanceMethods)
 
         base.class_eval do
-          unloadable # Send unloadable so it will not be unloaded in development
-
           # add settings for gpg encryption/signature to prepared email
           alias_method :prepare_email_without_gpg, :prepare_email
           alias_method :prepare_email, :prepare_email_with_gpg
