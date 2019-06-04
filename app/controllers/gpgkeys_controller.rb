@@ -31,6 +31,13 @@ class GpgkeysController < ApplicationController
     redirect_to gpgkeys_path
   end
 
+  def query
+    (render_400; return false) unless params['id']
+    found = GpgKeys.key_for_encryption?(params['id'])
+    expires_now
+    render plain: found
+  end
+
   # refresh keys from key server
   def refresh
     GpgKeys.refresh_keys

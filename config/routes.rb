@@ -1,5 +1,5 @@
 resources :gpgkeys do
   collection do
-    get :refresh, :expired
+    get :refresh, :expired, :query
   end
 end
