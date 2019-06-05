@@ -94,5 +94,10 @@ module HelpDeskGPG
     def self.send_mail_encrypted_by_default(project)
       HelpdeskSettings[:gpg_send_default_action, project.id].to_i & 2 > 0
     end
+
+    def self.preselect_encryption_for_issue?(issue)
+      (issue.gpg_journal.present? && issue.gpg_journal.encrypted? && GpgKeys.key_for_encryption?(issue.helpdesk_ticket.from_address)) ||
+        HelpDeskGPG::Helper.send_mail_encrypted_by_default(issue.project) 
+    end
   end
 end
