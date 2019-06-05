@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.4.0 (Jun 2019)
+----------------
+
+* preselect encryption when replying to an encrypted issue
+* fix gpg send options checkbox labels
+* code cleanups, modernization 
+* fix key lookup from Javascript code
+* target Ruby 2.5
+
 0.3.0 (Apr 2019)
 ----------------
 
