@@ -7,7 +7,6 @@
 
   div style="display:none;"
     #helpdesk_send_response_gpg_new
-      - encrypt_default = HelpDeskGPG::Helper.send_mail_encrypted_by_default(@project) 
-      - sign_default = HelpDeskGPG::Helper.send_mail_signed_by_default(@project) 
-      = render partial: 'gpg_send_options', locals: { encrypt_default: encrypt_default , sign_default: sign_default }
-
+      - encrypt_default = HelpDeskGPG::Helper.send_mail_encrypted_by_default(@project)
+      - sign_default = HelpDeskGPG::Helper.send_mail_signed_by_default(@project)
+      = render partial: 'gpg_send_options', locals: { encrypt_default: encrypt_default, sign_default: sign_default }

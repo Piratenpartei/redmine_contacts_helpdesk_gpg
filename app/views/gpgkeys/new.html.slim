@@ -2,7 +2,7 @@ h2
   =l(:label_gpg_keystore)
 h3
   =l(:label_key_new)
-= form_tag(gpgkeys_path('import'), html: { id: 'gpgkey-import-form', multipart: true } ) do
+= form_tag(gpgkeys_path('import'), html: { id: 'gpgkey-import-form', multipart: true }) do
   .box.tabular
     p#attachments_form
       label

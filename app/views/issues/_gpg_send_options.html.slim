@@ -1,7 +1,7 @@
 - fingerprint = HelpDeskGPG::Helper.shorten_fingerprint(HelpdeskSettings[:gpg_sign_key, @project.id])
-= check_box_tag 'helpdesk[gpg_do_encrypt]', 1, encrypt_default 
+= check_box_tag 'helpdesk[gpg_do_encrypt]', 1, encrypt_default
 = label_tag :helpdesk_gpg_do_encrypt, l(:label_gpg_do_encrypt)
-        
-- unless HelpdeskSettings[:gpg_sign_key, @project].blank?
+
+- if HelpdeskSettings[:gpg_sign_key, @project].present?
     = check_box_tag 'helpdesk[gpg_do_sign]', 1, sign_default
-    = label_tag :helpdesk_gpg_do_sign, "#{l(:label_gpg_do_sign)} #{fingerprint}" 
+    = label_tag :helpdesk_gpg_do_sign, "#{l(:label_gpg_do_sign)} #{fingerprint}"

@@ -5,7 +5,7 @@
 
 - html_title(l(:label_gpg_keystore))
 
-h2 =l(:label_gpg_keystore)
+h2 = l(:label_gpg_keystore)
 
 = form_tag(gpgkeys_path('filter'), method: :get) do
   fieldset
@@ -36,8 +36,8 @@ h2 =l(:label_gpg_keystore)
     table#gpgkeys.list
       thead
         tr
-          th =l(:label_key_uid)
-          th =l(:label_key_details)
+          th = l(:label_key_uid)
+          th = l(:label_key_details)
           th
       tbody
         = render partial: 'data_line', collection: @keys[@offset, @limit], as: :key
