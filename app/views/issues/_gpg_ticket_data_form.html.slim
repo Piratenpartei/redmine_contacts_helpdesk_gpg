@@ -1,0 +1,11 @@
+- if @issue.new_record? && !@copy_from && User.current.allowed_to?(:edit_helpdesk_tickets, @project) && @issue.tracker_id.to_s == HelpdeskSettings[:helpdesk_tracker, @project.id]
+
+  javascript:
+    $(document).ready(function() {
+      $('div.email-template').find('div.splitcontentright').append($('#helpdesk_send_response_gpg_new'));
+    });
+
+  div style="display:none;"
+    #helpdesk_send_response_gpg_new
+      = render partial: 'gpg_send_options'
+
