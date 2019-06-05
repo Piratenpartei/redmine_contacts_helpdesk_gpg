@@ -49,14 +49,12 @@ class GpgKeys
     ctx = GPGME::Ctx.new
     keys = ctx.keys(nil, false)
     keys.each do |key|
-      begin
-        Rails.logger.info "Gpgkeys#refresh_key #{key.fingerprint} <#{key.email}>"
-        @@hkp.fetch_and_import(key.fingerprint)
-      rescue StandardError
-        # catch OpenURI::HTTPError 404 for keys not on key server
-        Rails.logger.info "Gpgkeys#refresh_key caught error on #{key.fingerprint}"
-        next
-      end
+      Rails.logger.info "Gpgkeys#refresh_key #{key.fingerprint} <#{key.email}>"
+      @@hkp.fetch_and_import(key.fingerprint)
+    rescue StandardError
+      # catch OpenURI::HTTPError 404 for keys not on key server
+      Rails.logger.info "Gpgkeys#refresh_key caught error on #{key.fingerprint}"
+      next
     end
     ctx.release
   end
