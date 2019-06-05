@@ -33,27 +33,27 @@ module RedmineContactsHelpdeskGpg
           email_or_raw.force_encoding('ASCII-8BIT') if email_or_raw.respond_to?(:force_encoding)
           the_email = email_or_raw.is_a?(Mail) ? email_or_raw : Mail.new(email_or_raw)
           @gpg_received_options = { encrypted: false, signed: false }
-          logger.info "initialize_with_gpg: email.from_addrs is '#{the_email.from_addrs}'" unless logger.nil?
+          logger&.info "initialize_with_gpg: email.from_addrs is '#{the_email.from_addrs}'"
           sender_email = the_email.from_addrs.first.to_s.strip
           if the_email.encrypted?
-            logger.info "initialize_with_gpg: do I have a key for decrypting? '#{HelpdeskSettings[:gpg_decrypt_key, target_project]}" unless logger.nil?
+            logger&.info "initialize_with_gpg: do I have a key for decrypting? '#{HelpdeskSettings[:gpg_decrypt_key, target_project]}"
             decrypted = the_email.decrypt(verify: true, password: HelpdeskSettings[:gpg_decrypt_key_password, target_project], pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
             @gpg_received_options[:encrypted] = true
             @gpg_received_options[:signed] = decrypted.signature_valid?
-            logger.info "initialize_with_gpg: Mail was encrypted" unless logger.nil?
-            logger.info "initialize_with_gpg: signature(s) valid: #{decrypted.signature_valid?}" unless logger.nil?
-            logger.info "initialize_with_gpg: message signed by: #{decrypted.signatures.map{|sig|sig.from}.join("\n")}" unless logger.nil?
+            logger&.info 'initialize_with_gpg: Mail was encrypted'
+            logger&.info "initialize_with_gpg: signature(s) valid: #{decrypted.signature_valid?}"
+            logger&.info "initialize_with_gpg: message signed by: #{decrypted.signatures.map(&:from).join("\n")}"
             the_email = Mail.new(decrypted)
           elsif the_email.signed?
             have_key = GpgKeys.check_and_optionally_import_key(sender_email)
             if have_key
               verified = the_email.verify
-              logger.info "initialize_with_gpg: signature(s) valid: #{verified.signature_valid?}" unless logger.nil?
-              logger.info "initialize_with_gpg: message signed by: #{verified.signatures.map{|sig|sig.from}.join("\n")}" unless logger.nil?
+              logger&.info "initialize_with_gpg: signature(s) valid: #{verified.signature_valid?}"
+              logger&.info "initialize_with_gpg: message signed by: #{verified.signatures.map(&:from).join("\n")}"
               @gpg_received_options[:signed] = verified.signature_valid?
               the_email = Mail.new(verified) if verified.signature_valid?
             else
-              logger.info "initialize_with_gpg: could not find key for: #{sender_email}" unless logger.nil?
+              logger&.info "initialize_with_gpg: could not find key for: #{sender_email}"
             end
           end
           initialize_without_gpg(the_email, options)

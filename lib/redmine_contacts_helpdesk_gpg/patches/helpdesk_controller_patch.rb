@@ -30,7 +30,7 @@ module RedmineContactsHelpdeskGpg
 
         def set_settings_param_with_gpg(param)
           if %i[gpg_decrypt_key_password gpg_sign_key_password].include?(param)
-            ContactsSetting[param, @project.id] = params[param] if params[param] && params[param].present?
+            ContactsSetting[param, @project.id] = params[param] if params[param]&.present?
           else
             set_settings_param_without_gpg(param)
           end

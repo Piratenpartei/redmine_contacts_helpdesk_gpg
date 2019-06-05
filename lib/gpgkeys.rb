@@ -26,14 +26,11 @@ class GpgKeys
     cnt_pub_old = GPGME::Key.find(:public).length
     cnt_priv_old = GPGME::Key.find(:secret).length
 
-    if params[:attachments]
-      # Rails.logger.info "Gpgkeys#import has attachments"
-      params[:attachments].each do |_id, descr|
-        attached = Attachment.find_by_token(descr['token'])
-        if attached
-          GPGME::Key.import(File.open(attached.diskfile))
-          attached.delete_from_disk
-        end
+    params[:attachments]&.each do |_id, descr|
+      attached = Attachment.find_by_token(descr['token'])
+      if attached
+        GPGME::Key.import(File.open(attached.diskfile))
+        attached.delete_from_disk
       end
     end
 
@@ -44,7 +41,7 @@ class GpgKeys
 
   def self.remove_key(fingerprint)
     key = GPGME::Key.get(fingerprint)
-    key.delete!(true) if key
+    key&.delete!(true)
   end
 
   # refresh all keys in keystore from public key server
@@ -143,11 +140,9 @@ class GpgKeys
     if keys.empty?
       # logger.info "check_and_optionally_import_key: Doing hkp lookup for key '#{mail_address}'"
       found = @@hkp.search(mail_address)
-      if found
-        found.each do |result|
-          keyid = result[0]
-          _key = @@hkp.fetch_and_import(keyid)
-        end
+      found&.each do |result|
+        keyid = result[0]
+        _key = @@hkp.fetch_and_import(keyid)
       end
       keys = GPGME::Key.find(:public, mail_address)
     end
@@ -184,11 +179,9 @@ class GpgKeys
   # lookup key from keyserver and import into store if found
   def self.key_from_keyserver(mailaddress)
     found = @@hkp.search(mailaddress)
-    if found
-      found.each do |result|
-        keyid = result[0]
-        @@hkp.fetch_and_import(keyid)
-      end
+    found&.each do |result|
+      keyid = result[0]
+      @@hkp.fetch_and_import(keyid)
     end
   rescue StandardError # catch OpenURI::HTTPError 404 for keys not on key server
     Rails.logger.info "Gpgkeys#key_from_keyserver caught error on #{mailaddress}"

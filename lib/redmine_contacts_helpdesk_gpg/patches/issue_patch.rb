@@ -11,11 +11,11 @@ module RedmineContactsHelpdeskGpg
 
       module InstanceMethods
         def gpg_signed?
-          gpg_journal && gpg_journal.signed?
+          gpg_journal&.signed?
         end
 
         def gpg_encrypted?
-          gpg_journal && gpg_journal.encrypted?
+          gpg_journal&.encrypted?
         end
       end
     end

@@ -20,7 +20,7 @@ module HelpDeskGPG
 
     def setup
       # Patches
-      Additionals.patch(%w[HelpdeskMailContainer 
+      Additionals.patch(%w[HelpdeskMailContainer
                            HelpdeskMailMessenger
                            HelpdeskController
                            Issue
@@ -32,7 +32,6 @@ module HelpDeskGPG
       require_dependency 'hooks/view_issues_hook'
       require_dependency 'hooks/view_layouts_hook'
       require_dependency 'hooks/issues_controller_hook'
-
     end
   end
 
@@ -97,7 +96,7 @@ module HelpDeskGPG
 
     def self.preselect_encryption_for_issue?(issue)
       (issue.gpg_journal.present? && issue.gpg_journal.encrypted? && GpgKeys.key_for_encryption?(issue.helpdesk_ticket.from_address)) ||
-        HelpDeskGPG::Helper.send_mail_encrypted_by_default(issue.project) 
+        HelpDeskGPG::Helper.send_mail_encrypted_by_default(issue.project)
     end
   end
 end
