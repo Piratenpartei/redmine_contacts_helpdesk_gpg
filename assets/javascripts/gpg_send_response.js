@@ -2,22 +2,9 @@ var checkedGPGKeys = new Object();
 
 function showGPGHints() {
   var enabled = isGPGEncryptionEnabled();
-  if ($($('a.inline-edit.email-template').get(0)).is(":visible")) {
-    showContactGPGHint(enabled);
-  }
   $([$('#helpdesk_to'), $('#helpdesk_cc'), $('#helpdesk_bcc')]).each(function(index, cc_list) {
     showTagsGPGHint(cc_list, enabled);
   });
-}
-
-function showContactGPGHint(enabled) {
-  // check key for tickets' primary contact
-  if (enabled) {
-    var mailadr = $($('#customer_to_email').contents().filter(function () { return this.nodeType === 3; })[1]).text().match(/\b(\S[^\(])(.+)(?=\))/g);
-    checkGPGKeyFor(mailadr, $('span.contact', '#customer_to_email'));
-  } else {
-    $('span.contact', '#customer_to_email').removeClass('recipient-check-key recipient-has-key recipient-has-no-key');
-  }
 }
 
 function showTagsGPGHint(cc_list, enabled) {
