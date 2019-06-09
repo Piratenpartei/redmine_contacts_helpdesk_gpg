@@ -71,3 +71,47 @@ function setupCheckForTags() {
     });
   });
 }
+
+$(function() {
+  // stuff from the helpdesk plugin we rely on
+  sendMailCheckbox = $('#helpdesk_is_send_mail');
+  ccFields = $('#cc_fields');
+  recipientEmail = $('#customer_to_email');
+
+  // add click handler for checking keys when encryption is enabled
+  $('#helpdesk_gpg_do_encrypt').on('change', showGPGHints);
+
+  // add handler(s) for new mail adresses which are edited inline
+  setupCheckForTags();
+
+  gpgOptions = $('#helpdesk_send_response_gpg');
+
+  function showGpgOptions() {
+    gpgOptions.show();
+    // Also show all mail recipients to avoid surprises with hidden CC adresses that could be security incidents.
+    ccFields.show();
+    recipientEmail.hide();
+    recipientEmail.next().hide();
+  }
+
+  function hideGpgOptions() {
+    gpgOptions.hide();
+  }
+
+  function toggleGpgOptions() {
+    if (this.checked) {
+      showGpgOptions();
+    } else {
+      hideGpgOptions();
+    }
+  }
+  sendMailCheckbox.on('change', toggleGpgOptions);
+
+  gpgOptions.hide();
+
+  // Clicking on the reply button activates the mail checkbox, but does not trigger a change event.
+  // We have to bind to the click event ourselves and show the GPG options.
+  $('.icon-helpdesk-reply').on('click', function() { 
+    showGpgOptions();
+  });
+});
