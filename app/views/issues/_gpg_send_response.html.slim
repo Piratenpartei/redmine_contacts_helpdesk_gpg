@@ -49,7 +49,7 @@
         });
       });
 
-  #helpdesk_send_response_gpg
+  span#helpdesk_send_response_gpg
     - encrypt_default = HelpDeskGPG::Helper.preselect_encryption_for_issue?(@issue)
     - sign_default = HelpDeskGPG::Helper.send_mail_signed_by_default(@project)
     = render partial: 'gpg_send_options', locals: { encrypt_default: encrypt_default, sign_default: sign_default }
