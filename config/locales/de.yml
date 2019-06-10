@@ -40,3 +40,4 @@ de:
   msg_gpg_keys_updated: Schlüssel wurden aktualisiert.
   msg_gpg_keys_imported: "Es wurden %{pub} öffentliche und %{priv} private Schlüssel importiert."
   msg_gpg_keys_expired: "%{cnt} abgelaufene Schlüssel wurden entfernt."
+  msg_gpg_key_missing: "Schlüssel fehlt für Empfänger %{missing}."

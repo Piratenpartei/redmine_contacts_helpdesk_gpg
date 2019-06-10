@@ -30,7 +30,7 @@ module RedmineContactsHelpdeskGpg
 
           _created_journal = maySetGPGOptionsFromParams(issue, options)
 
-          _gpg_journal = RedmineHelpdeskGPG::IssuesControllerHookHelper.queryJournal(_issue.id)
+          _gpg_journal = HelpDeskGPG::GpgJournalHelper.queryJournal(_issue.id)
           _gpg_options = validateGPGOptionsFromParams(project, options, _gpg_journal)
           # logger.info "prepare_email_with_gpg: set gpg options: #{_gpgOptions}"
 
@@ -38,7 +38,7 @@ module RedmineContactsHelpdeskGpg
 
           if _created_journal
             ## save the journal entry if we created it here
-            RedmineHelpdeskGPG::IssuesControllerHookHelper.saveJournal(_issue.id)
+            HelpDeskGPG::GpgJournalHelper.saveJournal(_issue.id)
           end
 
           email
@@ -57,7 +57,7 @@ module RedmineContactsHelpdeskGpg
           created_journal = false
           if params[:helpdesk]
             if params[:helpdesk][:gpg_do_encrypt] || params[:helpdesk][:gpg_do_sign]
-              RedmineHelpdeskGPG::IssuesControllerHookHelper.prepareJournal(issue, nil, params[:helpdesk])
+              HelpDeskGPG::GpgJournalHelper.prepareJournal(issue, nil, params[:helpdesk])
               created_journal = true
             end
           end

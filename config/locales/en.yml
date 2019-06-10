@@ -40,3 +40,4 @@ en:
   msg_gpg_keys_updated: Keys have been updated.
   msg_gpg_keys_imported: "%{pub} public keys and %{priv} secrest keys have been imported."
   msg_gpg_keys_expired: "%{cnt} expired keys have been removed."
+  msg_gpg_key_missing: "Key is missing for recipient %{missing}."

@@ -99,4 +99,32 @@ module HelpDeskGPG
         HelpDeskGPG::Helper.send_mail_encrypted_by_default(issue.project)
     end
   end
+
+  class GpgJournalHelper
+    @journals = {}
+
+    def self.prepareJournal(issue, journal, params)
+      return if params.nil?
+
+      if params[:gpg_do_encrypt] || params[:gpg_do_sign]
+        item = GpgJournal.new
+        item.signed = params[:gpg_do_sign] == '1'
+        item.encrypted = params[:gpg_do_encrypt] == '1'
+        item.journal = journal
+        @journals[issue.id] = item
+      end
+    end
+
+    def self.queryJournal(issue_id)
+      @journals[issue_id]
+    end
+
+    def self.saveJournal(issue_id)
+      item = @journals[issue_id]
+      unless item.nil?
+        item.save
+        @journals.delete(issue_id)
+      end
+    end
+  end
 end
