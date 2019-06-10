@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.5.0 (Jun 2019)
+----------------
+
+* mail area changes for Helpdesk 4.1.0
+* GPG options checkboxes are now on the same line as the mail checkbox above the mail area
+* always show full recipient fields, CC / BCC addresses are always visible now
+* fix display of GPG key indicators for the recipient fields
+* hide GPG options if mail checkbox is not checked
+* give earlier feedback about missing keys and don't save journal then
+
 0.4.0 (Jun 2019)
 ----------------
 
