@@ -2,7 +2,8 @@ require 'gpgkeys'
 
 class GpgkeysController < ApplicationController
   layout 'admin'
-  before_action :require_admin
+  before_action :require_admin, except: :query
+  before_action :require_login, only: [:query]
 
   def initialize
     super()
