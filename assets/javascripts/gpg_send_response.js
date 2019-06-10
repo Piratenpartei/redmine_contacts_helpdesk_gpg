@@ -1,42 +1,41 @@
-var checkedGPGKeys = new Object();
-
 function showGPGHints() {
   var enabled = isGPGEncryptionEnabled();
-  $([$('#helpdesk_to'), $('#helpdesk_cc'), $('#helpdesk_bcc')]).each(function(index, cc_list) {
-    showTagsGPGHint(cc_list, enabled);
+  $([$('#helpdesk_to'), $('#helpdesk_cc'), $('#helpdesk_bcc')]).each(function(index, select2) {
+    showTagsGPGHint(select2, enabled);
   });
 }
 
-function showTagsGPGHint(cc_list, enabled) {
+function showTagsGPGHint(select2, enabled) {
   // check existing 'tagged' adresses
-  $(cc_list).next().find("li").each(function(index, li_item) {
-    if (enabled && $(li_item).hasClass('select2-selection__choice')) {
-      var mailadr = $(li_item).attr('title').match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g);
-      checkGPGKeyFor(mailadr, $(li_item));
-    } else {
-      $(li_item).removeClass('recipient-check-key recipient-has-key recipient-has-no-key');
-    }
-  });
+  if (enabled) {
+    $(select2).find(":selected").each(function(index, option) {
+      checkGPGKeyFor(select2, $(option));
+    });
+  } else {
+    $(select2).next().find('.gpg').removeClass('recipient-check-key recipient-has-key recipient-has-no-key');
+  }
 }
 
-function checkGPGKeyFor(adr, element) {
-  element.addClass('recipient-check-key');
+function checkGPGKeyFor(select2, option) {
+  var email = option.data('data').id;
+
+  function findChoice() {
+    return select2.next().find('.select2-selection__choice:contains("' + email + '")');
+  }
+
   function setHint(data) {
     // Sets css style of an element according to result of (previous) check.
-    element.removeClass('recipient-check-key');
-    element.addClass(('true' == data) ? 'recipient-has-key' : 'recipient-has-no-key');
+    var cls = ('true' == data) ? 'recipient-has-key' : 'recipient-has-no-key';
+    findChoice().addClass(cls).addClass('gpg').removeClass('recipient-check-key');
   };
-  var previousResult = checkedGPGKeys[adr];
-  if (previousResult === undefined) {
-    // ajax call for checking availability of a key.
-    $.get( '../gpgkeys/query?id=' + adr,
-        function(data) {
-          checkedGPGKeys[adr] = data;
-          setHint(data);
-        });
-  } else {
-    setHint(previousResult);
-  }
+
+  findChoice().addClass('recipient-check-key').addClass('gpg');
+
+  // ajax call for checking availability of a key.
+  $.get( '../gpgkeys/query?id=' + email, function(data) {
+    console.log("key status received for: ", email, data);
+    setHint(data);
+  });
 }
 
 function isGPGEncryptionEnabled() {
@@ -88,6 +87,7 @@ $(function() {
   function toggleGpgOptions() {
     if (this.checked) {
       showGpgOptions();
+      showGPGHints();
     } else {
       hideGpgOptions();
     }
@@ -100,5 +100,6 @@ $(function() {
   // We have to bind to the click event ourselves and show the GPG options.
   $('.icon-helpdesk-reply').on('click', function() { 
     showGpgOptions();
+    showGPGHints();
   });
 });
