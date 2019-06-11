@@ -1,6 +1,12 @@
 Changelog
 =========
 
+
+0.5.1
+-----
+
+* fix saving of issues that were encrypted initially
+
 0.5.0 (Jun 2019)
 ----------------
 
