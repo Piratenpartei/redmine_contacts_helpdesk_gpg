@@ -105,14 +105,13 @@ module HelpDeskGPG
 
     def self.prepareJournal(issue, journal, params)
       return if params.nil?
+      return unless params[:gpg_do_encrypt] || params[:gpg_do_sign]
 
-      if params[:gpg_do_encrypt] || params[:gpg_do_sign]
-        item = GpgJournal.new
-        item.signed = params[:gpg_do_sign] == '1'
-        item.encrypted = params[:gpg_do_encrypt] == '1'
-        item.journal = journal
-        @journals[issue.id] = item
-      end
+      item = GpgJournal.new
+      item.signed = params[:gpg_do_sign] == '1'
+      item.encrypted = params[:gpg_do_encrypt] == '1'
+      item.journal = journal
+      @journals[issue.id] = item
     end
 
     def self.queryJournal(issue_id)
@@ -121,10 +120,10 @@ module HelpDeskGPG
 
     def self.saveJournal(issue_id)
       item = @journals[issue_id]
-      unless item.nil?
-        item.save
-        @journals.delete(issue_id)
-      end
+      return if item.nil?
+
+      item.save
+      @journals.delete(issue_id)
     end
   end
 end

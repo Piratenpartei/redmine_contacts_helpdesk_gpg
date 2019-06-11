@@ -23,6 +23,8 @@ module RedmineContactsHelpdeskGpg
 
         def validate_recipient_gpg_keys_present
           return unless current_journal&.gpg_journal&.encrypted?
+          return unless current_journal.journal_message
+
           message = current_journal.journal_message
           receivers = [
             message[:to_address]&.split(','),
