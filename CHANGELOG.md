@@ -1,6 +1,11 @@
 Changelog
 =========
 
+19.10.0
+-------
+
+* remove support for GPG passphrases
+
 
 0.5.1
 -----
@@ -22,7 +27,7 @@ Changelog
 
 * preselect encryption when replying to an encrypted issue
 * fix gpg send options checkbox labels
-* code cleanups, modernization 
+* code cleanups, modernization
 * fix key lookup from Javascript code
 * target Ruby 2.5
 
@@ -81,5 +86,5 @@ Changelog
 0.0.1 unreleased
 ----------------
 
-*   initial development version 
+*   initial development version
 

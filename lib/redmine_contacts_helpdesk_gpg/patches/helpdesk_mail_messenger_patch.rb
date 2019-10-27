@@ -84,8 +84,6 @@ module RedmineContactsHelpdeskGpg
           end
           if gpg_journal.signed? ## shall we sign the message?
             _gpg_options[:sign_as] = HelpdeskSettings[:gpg_sign_key, project]
-            _gpg_options[:password] = HelpdeskSettings[:gpg_sign_key_password, project]
-            _gpg_options[:pinentry_mode] = GPGME::PINENTRY_MODE_LOOPBACK
           end
           _gpg_options
         end

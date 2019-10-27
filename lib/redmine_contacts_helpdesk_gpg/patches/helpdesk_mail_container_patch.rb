@@ -37,7 +37,7 @@ module RedmineContactsHelpdeskGpg
           sender_email = the_email.from_addrs.first.to_s.strip
           if the_email.encrypted?
             logger&.info "initialize_with_gpg: do I have a key for decrypting? '#{HelpdeskSettings[:gpg_decrypt_key, target_project]}"
-            decrypted = the_email.decrypt(verify: true, password: HelpdeskSettings[:gpg_decrypt_key_password, target_project], pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
+            decrypted = the_email.decrypt(verify: true)
             @gpg_received_options[:encrypted] = true
             @gpg_received_options[:signed] = decrypted.signature_valid?
             logger&.info 'initialize_with_gpg: Mail was encrypted'

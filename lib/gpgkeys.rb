@@ -77,7 +77,7 @@ class GpgKeys
   ## private
 
   def self.new_context
-    GPGME::Ctx.new(pinentry_mode: GPGME::PINENTRY_MODE_LOOPBACK)
+    GPGME::Ctx.new
   end
 
   def self.find_all_keys

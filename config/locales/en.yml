@@ -1,9 +1,9 @@
 en:
   label_ggp_setting: GPG Configuration
   label_gpg_keystore: GPG Key management
-  label_gpg_gpgme_api: GPGME Interface 
-  label_gpg_protocols: GPGME Protocols 
-  label_gpg_engines: GPGME Engines 
+  label_gpg_gpgme_api: GPGME Interface
+  label_gpg_protocols: GPGME Protocols
+  label_gpg_engines: GPGME Engines
   label_gpg_keystore_info: Key store information
   msg_gpg_keystore_info: "Found %{pub} public keys / %{priv} secret keys"
 
@@ -25,14 +25,13 @@ en:
 
   label_pgpkey: GPG key
   label_no_key: (nothing)
-  label_gpg_key_password: GPG password
   label_gpg_filter_name: Name
   label_gpg_filter_privatekeysonly: Only private keys
   label_gpg_filter_expiredkeysonly: Only expired keys
-  
+
   label_gpg_do_sign: Sign mail with
   label_gpg_do_encrypt: Encrypt mail
-  
+
   label_gpg_signed: signed
   label_gpg_encrypted: encrypted
   label_gpg_signed_encrypted: signed and encrypted

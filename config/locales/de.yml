@@ -9,7 +9,7 @@ de:
 
   setting_gpg_keyrings_dir: Verzeichnis der Schlüsselbunde
   setting_gpg_keyserver: Adresse des Schlüsselservers
-  
+
   label_key_new: Schlüssel importieren
   label_keys_refresh: Vom Keyserver aktualisieren
   label_keys_remove_expired: Abgelaufene Schlüssel entfernen
@@ -17,7 +17,7 @@ de:
   label_key_details: Details
   label_key_expires: verfällt
   label_key_expires_never: niemals
-  
+
   label_gpg_action: GPG default beim Versenden
   label_gpg_action_sign: Signieren
   label_gpg_action_encrypt: Verschlüsseln
@@ -25,11 +25,10 @@ de:
 
   label_pgpkey: GPG Schlüssel
   label_no_key: (keine Auswahl)
-  label_gpg_key_password: GPG Passwort
   label_gpg_filter_name: Name
   label_gpg_filter_privatekeysonly: Nur private Schlüssel
   label_gpg_filter_expiredkeysonly: Nur abgelaufene Schlüssel
-  
+
   label_gpg_do_sign: Signiere Mail mit
   label_gpg_do_encrypt: Verschlüssele Mail
 
