@@ -16,7 +16,7 @@ function showGpgKeyIndicatorsForSelectField(select2, enabled) {
 }
 
 function checkGpgKeyForOption(select2, option) {
-  let email = option.data('data').id;
+  let email = option.val();
 
   // The select2 choice element can change in the meantime.
   // Saving the reference for later may not work, we must find the current one when we want to manipulate it.
@@ -100,7 +100,7 @@ $(function() {
 
   // Clicking on the reply button activates the mail checkbox, but does not trigger a change event.
   // We have to bind to the click event ourselves and show the GPG options.
-  $('.icon-helpdesk-reply').on('click', function() { 
+  $('.icon-helpdesk-reply').on('click', function() {
     showGpgOptions();
     showAllGpgKeyIndicators();
   });
