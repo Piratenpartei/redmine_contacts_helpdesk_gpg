@@ -54,11 +54,11 @@ module HelpDeskGPG
       ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
       GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
       ctx = new_context
-      pub = ctx.keys(nil, false)
-      priv = ctx.keys(nil, true)
+      pub_length = ctx.keys(nil, false).length
+      priv_length = ctx.keys(nil, true).length
       ctx.release
 
-      [pub.length, priv.length]
+      [pub_length, priv_length]
     end
 
     def self.private_keys_select_options

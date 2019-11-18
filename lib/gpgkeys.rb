@@ -46,28 +46,29 @@ class GpgKeys
 
   # refresh all keys in keystore from public key server
   def self.refresh_keys
-    ctx = GPGME::Ctx.new
-    keys = ctx.keys(nil, false)
-    keys.each do |key|
-      Rails.logger.info "Gpgkeys#refresh_key #{key.fingerprint} <#{key.email}>"
-      @@hkp.fetch_and_import(key.fingerprint)
-    rescue StandardError
-      # catch OpenURI::HTTPError 404 for keys not on key server
-      Rails.logger.info "Gpgkeys#refresh_key caught error on #{key.fingerprint}"
-      next
+    new_context do |ctx|
+      keys = ctx.keys(nil, false)
+      keys.each do |key|
+        Rails.logger.info "Gpgkeys#refresh_key #{key.fingerprint} <#{key.email}>"
+        @@hkp.fetch_and_import(key.fingerprint)
+      rescue StandardError
+        # catch OpenURI::HTTPError 404 for keys not on key server
+        Rails.logger.info "Gpgkeys#refresh_key caught error on #{key.fingerprint}"
+        next
+      end
     end
-    ctx.release
   end
 
   # remove expired keys from keystore
   def self.remove_expired_keys
     cnt = 0
-    ctx = GPGME::Ctx.new
-    keys = ctx.keys(nil, false)
-    keys.each do |key|
-      if key_expired_or_revoked(key)
-        key.delete!(true)
-        cnt += 1
+    new_context do |ctx|
+      keys = ctx.keys(nil, false)
+      keys.each do |key|
+        if key_expired_or_revoked(key)
+          key.delete!(true)
+          cnt += 1
+        end
       end
     end
     Rails.logger.info "Gpgkeys#remove_expired_keys removed #{cnt} keys"
@@ -81,13 +82,13 @@ class GpgKeys
   end
 
   def self.find_all_keys
-    ctx = new_context
-    keys = ctx.keys(nil, false)
     @@sec_fingerprints = []
+    ctx = new_context
     sec = ctx.keys(nil, true)
     sec.each do |key|
       @@sec_fingerprints.push(key.subkeys[0].fingerprint)
     end
+    keys = ctx.keys(nil, false)
     ctx.release
     keys
   end
