@@ -1,9 +1,22 @@
 - if @issue.new_record? && !@copy_from && User.current.allowed_to?(:edit_helpdesk_tickets, @project) && @issue.tracker_id.to_s == HelpdeskSettings[:helpdesk_tracker, @project.id]
 
   javascript:
-    $(document).ready(function() {
+
+    $(function() {
       $('div.email-template').find('div.splitcontentright').append($('#helpdesk_send_response_gpg_new'));
+
+      // XXX: This is just a hack to fix a bug in Helpdesk / Contacts
+      // Creating issues with newly created contacts doesn't work without that.
+
+      $('#issue-form').on('submit', function() {
+        if ($('.helpdesk-ticket-customer-id').val() === '') {
+          var customer_id = $('#customer_address').select2('data')[0].id;
+          $('.helpdesk-ticket-customer-id').val(customer_id);
+        };
+      });
+
     });
+
 
   div style="display:none;"
     #helpdesk_send_response_gpg_new
