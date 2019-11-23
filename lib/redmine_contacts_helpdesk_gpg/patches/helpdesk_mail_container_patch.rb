@@ -25,38 +25,42 @@ module RedmineContactsHelpdeskGpg
       end # self.included
 
       module InstanceMethods
-        # checks for encrypted/signed mail then proceeds with the receiving process
         def initialize_with_gpg(email_or_raw, options = {})
+          # XXX: this is called for sending and receiving of mails, but the encryption / signature parts
+          # are only called for incoming mails. This is a bit confusing...
           init_gpg_settings
           logger = options[:logger]
           target_project = (options[:issue])[:project_id]
           email_or_raw.force_encoding('ASCII-8BIT') if email_or_raw.respond_to?(:force_encoding)
-          the_email = email_or_raw.is_a?(Mail) ? email_or_raw : Mail.new(email_or_raw)
+          mail = email_or_raw.is_a?(Mail) ? email_or_raw : Mail.new(email_or_raw)
           @gpg_received_options = { encrypted: false, signed: false }
-          logger&.info "initialize_with_gpg: email.from_addrs is '#{the_email.from_addrs}'"
-          sender_email = the_email.from_addrs.first.to_s.strip
-          if the_email.encrypted?
-            logger&.info "initialize_with_gpg: do I have a key for decrypting? '#{HelpdeskSettings[:gpg_decrypt_key, target_project]}"
-            decrypted = the_email.decrypt(verify: true)
+          sender_email = mail.from_addrs.first.to_s.strip
+          header = mail.header
+          if mail.encrypted?
+            decrypt_key = HelpdeskSettings[:gpg_decrypt_key, target_project]
+            logger&.info "gpg_receive_mail: encrypted incoming mail; from=#{sender_email}, key=#{decrypt_key}, header=#{header.to_json}"
+            decrypted = mail.decrypt(verify: true)
             @gpg_received_options[:encrypted] = true
-            @gpg_received_options[:signed] = decrypted.signature_valid?
-            logger&.info 'initialize_with_gpg: Mail was encrypted'
-            logger&.info "initialize_with_gpg: signature(s) valid: #{decrypted.signature_valid?}"
-            logger&.info "initialize_with_gpg: message signed by: #{decrypted.signatures.map(&:from).join("\n")}"
-            the_email = Mail.new(decrypted)
-          elsif the_email.signed?
+            sig_valid = decrypted.signature_valid?
+            signatures = decrypted.signatures.map(&:from)
+            logger&.info "gpg_receive_mail: checked signature; message_id=#{mail.message_id}, sig_valid=#{sig_valid}, signatures=#{signatures.join(',')}"
+            @gpg_received_options[:signed] = sig_valid
+            mail = Mail.new(decrypted)
+          elsif mail.signed?
+            logger&.info "gpg_receive_mail: signed incoming mail; from=#{sender_email}, header=#{header.to_json}"
             have_key = GpgKeys.check_and_optionally_import_key(sender_email)
             if have_key
-              verified = the_email.verify
-              logger&.info "initialize_with_gpg: signature(s) valid: #{verified.signature_valid?}"
-              logger&.info "initialize_with_gpg: message signed by: #{verified.signatures.map(&:from).join("\n")}"
-              @gpg_received_options[:signed] = verified.signature_valid?
-              the_email = Mail.new(verified) if verified.signature_valid?
+              verified = mail.verify
+              sig_valid = verified.signature_valid?
+              signatures = decrypted.signatures.map(&:from)
+              logger&.info "gpg_receive_mail: checked signature; sig_valid=#{sig_valid}, signatures=#{signatures.join(',')}"
+              @gpg_received_options[:signed] = sig_valid
+              mail = Mail.new(verified) if sig_valid
             else
-              logger&.info "initialize_with_gpg: could not find key for: #{sender_email}"
+              logger&.info "gpg_receive_mail: could not find key; message_id=#{mail.message_id}, from=#{sender_email}"
             end
           end
-          initialize_without_gpg(the_email, options)
+          initialize_without_gpg(mail, options)
         end
 
         def dispatch_with_gpg
@@ -75,7 +79,7 @@ module RedmineContactsHelpdeskGpg
         def save_gpg_journal(ref, options)
           return unless options[:signed] || options[:encrypted]
 
-          logger.info "save_gpg_journal: Creating GpgJournal for #{ref.class}(#{ref.id}): s:#{options[:signed]},e:#{options[:encrypted]}"
+          logger.info "save_gpg_journal: class=#{ref.class}, id=#{ref.id}, sign=#{options[:signed]}, encrypt=#{options[:encrypted]}"
           item = GpgJournal.new
           item.signed = options[:signed].present? && options[:signed]
           item.encrypted = options[:encrypted].present? && options[:encrypted]

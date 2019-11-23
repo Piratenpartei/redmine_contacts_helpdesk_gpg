@@ -17,40 +17,42 @@ module RedmineContactsHelpdeskGpg
           alias_method :prepare_email_without_gpg, :prepare_email
           alias_method :prepare_email, :prepare_email_with_gpg
         end
-      end # self.included
+      end
 
       module InstanceMethods
         def prepare_email_with_gpg(contact, object, options = {})
+          logger = options[:logger]
+          project = object.instance_of?(Issue) ? object.project : object.issue.project
+          issue = object.instance_of?(Issue) ? object : object.issue
+
+          logger&.info "gpg_send_mail: begin; issue=#{issue.id}, options=#{options.except(:logger).to_json}"
           initGPGSettings
 
+          logger&.info "gpg_send_mail: call prepare_email_without_gpg; issue=#{issue.id}"
           prepare_email_without_gpg(contact, object, options)
 
-          _project = object.instance_of?(Issue) ? object.project : object.issue.project
-          _issue = object.instance_of?(Issue) ? object : object.issue
+          created_journal = maySetGPGOptionsFromParams(issue, options)
+          logger&.info "gpg_send_mail: after maySetGPGOptionsFromParams; issue=#{issue.id}, created_journal=#{created_journal}"
 
-          _created_journal = maySetGPGOptionsFromParams(issue, options)
+          gpg_journal = HelpDeskGPG::GpgJournalHelper.queryJournal(issue.id)
+          gpg_options = validateGPGOptionsFromParams(project, options, gpg_journal, logger, issue.id)
+          logger&.info "gpg_send_mail: validated gpg options; issue=#{issue.id}, gpg_options=#{gpg_options}"
 
-          _gpg_journal = HelpDeskGPG::GpgJournalHelper.queryJournal(_issue.id)
-          _gpg_options = validateGPGOptionsFromParams(project, options, _gpg_journal)
-          # logger.info "prepare_email_with_gpg: set gpg options: #{_gpgOptions}"
+          mail gpg: gpg_options unless gpg_options.empty?
 
-          mail gpg: _gpg_options unless _gpg_options.empty?
-
-          if _created_journal
-            ## save the journal entry if we created it here
-            HelpDeskGPG::GpgJournalHelper.saveJournal(_issue.id)
+          if created_journal
+            HelpDeskGPG::GpgJournalHelper.saveJournal(issue.id)
           end
 
           email
-        end # prepare_email_with_gpg
+        end
 
-        ## private methods
         private
 
         def initGPGSettings
           ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
           GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-        end # initGPGSettings
+        end
 
         def maySetGPGOptionsFromParams(issue, params)
           # might create/prepare a journal entry. ()Esp. if issue is a newly created one and we working on its initial email.)
@@ -64,28 +66,31 @@ module RedmineContactsHelpdeskGpg
           created_journal
         end
 
-        def validateGPGOptionsFromParams(project, options, gpg_journal)
-          _gpg_options = {}
-          return _gpg_options if gpg_journal.nil?
+        def validateGPGOptionsFromParams(project, options, gpg_journal, logger, issue_id)
+          gpg_options = {}
+          return gpg_options if gpg_journal.nil?
 
           if gpg_journal.encrypted?
             # do we have keys for all recipients?
-            _receivers = []
-            _receivers += options[:to_address].split(',') if options[:to_address]
-            _receivers += options[:cc_address].split(',') if options[:cc_address]
-            _receivers += options[:bcc_address].split(',') if options[:bcc_address]
-            _missing_keys = GpgKeys.missing_keys_for_encryption(_receivers)
-            if _missing_keys.empty? # all keys are available :)
-              _gpg_options[:encrypt] = true
+            receivers = []
+            receivers += options[:to_address].split(',') if options[:to_address]
+            receivers += options[:cc_address].split(',') if options[:cc_address]
+            receivers += options[:bcc_address].split(',') if options[:bcc_address]
+            missing_keys = GpgKeys.missing_keys_for_encryption(receivers)
+            if missing_keys.empty?
+              gpg_options[:encrypt] = true
+              logger&.info "gpg_send_mail: keys available for all recipients; issue=#{issue_id}"
             else
               gpg_journal.encrypted = false
-              raise MailHandler::MissingInformation, "Cannot encrypt message. No public key for #{_missing_keys}"
+              logger&.info "gpg_send_mail: cannot encrypt, no mail sent; issue=#{issue_id}, missing_keys=#{missing_keys}"
+              raise MailHandler::MissingInformation, "Cannot encrypt, no mail sent. Public key missing for #{missing_keys}"
             end
           end
-          if gpg_journal.signed? ## shall we sign the message?
-            _gpg_options[:sign_as] = HelpdeskSettings[:gpg_sign_key, project]
+          logger&.info "gpg_send_mail: issue=#{issue_id}, sign_mail=#{gpg_journal.signed?}"
+          if gpg_journal.signed?
+            gpg_options[:sign_as] = HelpdeskSettings[:gpg_sign_key, project]
           end
-          _gpg_options
+          gpg_options
         end
       end
     end
