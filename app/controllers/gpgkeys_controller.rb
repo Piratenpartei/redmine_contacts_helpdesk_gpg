@@ -2,7 +2,7 @@ require 'gpgkeys'
 
 class GpgkeysController < ApplicationController
   layout 'admin'
-  before_action :require_admin, except: :query
+  before_action :require_admin, except: [:query, :selfcheck]
   before_action :require_login, only: [:query]
 
   def initialize
@@ -37,6 +37,11 @@ class GpgkeysController < ApplicationController
     found = GpgKeys.key_for_encryption?(params['id'])
     expires_now
     render plain: found
+  end
+
+  def selfcheck
+    key = GPGME::Key.find(:public, 'test@example.com')
+    render plain: key
   end
 
   # refresh keys from key server
