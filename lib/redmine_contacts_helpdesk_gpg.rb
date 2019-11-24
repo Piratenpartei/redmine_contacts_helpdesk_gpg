@@ -62,7 +62,12 @@ module HelpDeskGPG
     end
 
     def self.private_keys_select_options
-      priv = GPGME::Key.find(:secret)
+      begin
+        priv = GPGME::Key.find(:secret)
+      rescue Exception => e
+        Rails.logger.error "GPG key listing failed (process #{Process.pid}): #{e.message}\n#{e.backtrace.join($/)}"
+        return [['error, GPG key listing failed', nil]]
+      end
       options = []
       priv.each do |k|
         label = "0x#{k.primary_subkey.fingerprint[-8..-1]} &lt;#{k.primary_uid.email}&gt;".html_safe

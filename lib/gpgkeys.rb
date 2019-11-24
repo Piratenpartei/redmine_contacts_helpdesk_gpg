@@ -166,7 +166,13 @@ class GpgKeys
 
   def self.exact_key_available?(mailaddress, purpose)
     # lookup a key from store and check if its usable for 'purpose'
-    keys = GPGME::Key.find(:public, mailaddress, [purpose])
+    begin
+      keys = GPGME::Key.find(:public, mailaddress, [purpose])
+    rescue Exception => e
+      Rails.logger.error "GPG key listing failed (process #{Process.pid}): #{e.message}\n#{e.backtrace.join($/)}"
+      return false
+    end
+
     keys.each do |key|
       key.uids.each do |uid|
         return true if uid.email.casecmp(mailaddress)
