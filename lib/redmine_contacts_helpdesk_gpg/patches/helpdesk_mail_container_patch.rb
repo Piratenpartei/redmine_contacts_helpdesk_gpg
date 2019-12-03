@@ -50,9 +50,17 @@ module RedmineContactsHelpdeskGpg
             logger&.info "gpg_receive_mail: signed incoming mail; from=#{sender_email}, header=#{header.to_json}"
             have_key = GpgKeys.check_and_optionally_import_key(sender_email)
             if have_key
-              verified = mail.verify
-              sig_valid = verified.signature_valid?
-              signatures = decrypted.signatures.map(&:from)
+              begin
+                verified = mail.verify
+                sig_valid = verified.signature_valid?
+              rescue StandardError => e
+                logger&.error("gpg_receive_mail: signature verification failed (process #{Process.pid}): " +
+                  e.message +
+                  "\n\t" +
+                  e.backtrace.join("\n\t"))
+                sig_valid = false
+              end
+              signatures = verified.signatures.map(&:from)
               logger&.info "gpg_receive_mail: checked signature; sig_valid=#{sig_valid}, signatures=#{signatures.join(',')}"
               @gpg_received_options[:signed] = sig_valid
               mail = Mail.new(verified) if sig_valid
