@@ -134,7 +134,7 @@ class GpgKeys
   end
 
   # check existence of key for 'mail_address'. Return a boolean whether we found it
-  def self.check_and_optionally_import_key(mail_address)
+  def self.check_and_optionally_import_key(mail_address, logger = nil)
     keys = GPGME::Key.find(:public, mail_address)
     if keys.empty?
       # logger.info "check_and_optionally_import_key: Doing hkp lookup for key '#{mail_address}'"
@@ -146,8 +146,12 @@ class GpgKeys
       keys = GPGME::Key.find(:public, mail_address)
     end
     keys.present?
-  rescue StandardError
+  rescue StandardError => e
     # probably key not found or some other error while retrieving data from hkp
+    logger&.error("check_and_optionally_import_key failed (process #{Process.pid}): " +
+      e.message +
+      "\n\t" +
+      e.backtrace.join("\n\t"))
     false
   end
 
@@ -168,9 +172,6 @@ class GpgKeys
     # lookup a key from store and check if its usable for 'purpose'
     begin
       keys = GPGME::Key.find(:public, mailaddress, [purpose])
-    rescue Exception => e
-      Rails.logger.error "GPG key listing failed (process #{Process.pid}): #{e.message}\n#{e.backtrace.join($/)}"
-      return false
     end
 
     keys.each do |key|
@@ -178,6 +179,12 @@ class GpgKeys
         return true if uid.email.casecmp(mailaddress)
       end
     end
+    false
+  rescue StandardError => e
+    Rails.logger.error("exact_key_available? failed (process #{Process.pid}): " +
+      e.message +
+      "\n\t" +
+      e.backtrace.join("\n\t"))
     false
   end
 

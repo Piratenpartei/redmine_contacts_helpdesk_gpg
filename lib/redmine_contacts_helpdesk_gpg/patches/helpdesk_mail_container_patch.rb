@@ -22,7 +22,7 @@ module RedmineContactsHelpdeskGpg
           alias_method :dispatch_without_gpg, :dispatch
           alias_method :dispatch, :dispatch_with_gpg
         end
-      end # self.included
+      end
 
       module InstanceMethods
         def initialize_with_gpg(email_or_raw, options = {})
@@ -48,7 +48,8 @@ module RedmineContactsHelpdeskGpg
             mail = Mail.new(decrypted)
           elsif mail.signed?
             logger&.info "gpg_receive_mail: signed incoming mail; from=#{sender_email}, header=#{header.to_json}"
-            have_key = GpgKeys.check_and_optionally_import_key(sender_email)
+            have_key = GpgKeys.check_and_optionally_import_key(sender_email, logger)
+
             if have_key
               begin
                 verified = mail.verify
