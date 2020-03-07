@@ -1,6 +1,12 @@
 Changelog
 =========
 
+20.03.0
+-------
+
+* Supports Helpdesk 4.1.6 and Redmine 4.1.
+* Fix mail not being sent because first recipient is empty.
+
 19.12.0
 -------
 

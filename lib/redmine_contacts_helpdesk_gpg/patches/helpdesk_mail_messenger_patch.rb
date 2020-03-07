@@ -25,6 +25,10 @@ module RedmineContactsHelpdeskGpg
           project = object.instance_of?(Issue) ? object.project : object.issue.project
           issue = object.instance_of?(Issue) ? object : object.issue
 
+          # Strip leading comma. This breaks mail delivery otherwise.
+          # I don't know the origin, maybe there's an error in the Javascript code.
+          options[:to_address] = options[:to_address][1..] if options[:to_address].start_with?(',')
+
           logger&.info "gpg_send_mail: begin; issue=#{issue.id}, options=#{options.except(:logger).to_json}"
           initGPGSettings
 
