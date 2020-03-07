@@ -1,34 +1,55 @@
 Changelog
 =========
 
+19.12.0
+-------
+
+* Fix handling incoming signed mails, ignore verification errors.
+  Signature verification errors are handled like an invalid signature.
+
+
+19.11.1
+-------
+
+* Catch and log GPGME errors.
+* Improve mail (in/out) logging to catch errors in the GPG and helpdesk plugins.
+* Add some missing German translations.
+
+* Fix error for new helpdesk issues when contact has been created in the issue.
+
+19.11.0
+-------
+
+* Fix key status info for Helpdesk 4.1.5.
+
 19.10.0
 -------
 
-* remove support for GPG passphrases
+* Remove support for GPG passphrases.
 
 
 0.5.1
 -----
 
-* fix saving of issues that were encrypted initially
+* Fix saving of issues that were encrypted initially.
 
 0.5.0 (Jun 2019)
 ----------------
 
-* mail area changes for Helpdesk 4.1.0
-* GPG options checkboxes are now on the same line as the mail checkbox above the mail area
-* always show full recipient fields, CC / BCC addresses are always visible now
-* fix display of GPG key indicators for the recipient fields
-* hide GPG options if mail checkbox is not checked
-* give earlier feedback about missing keys and don't save journal then
+* Fix for mail area customizations for Helpdesk 4.1.0.
+* GPG options checkboxes are now on the same line as the mail checkbox above the mail area.
+* Always show full recipient fields, CC / BCC addresses are always visible now.
+* Fix display of GPG key indicators for the recipient fields.
+* Hide GPG options if mail checkbox is not checked.
+* Give earlier feedback about missing keys and don't save journal then.
 
 0.4.0 (Jun 2019)
 ----------------
 
-* preselect encryption when replying to an encrypted issue
-* fix gpg send options checkbox labels
+* Preselect encryption when replying to an encrypted issue.
+* Fix gpg send options checkbox labels.
 * code cleanups, modernization
-* fix key lookup from Javascript code
+* Fix key lookup from Javascript code.
 * target Ruby 2.5
 
 0.3.0 (Apr 2019)
