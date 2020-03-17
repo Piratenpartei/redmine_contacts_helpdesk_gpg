@@ -24,6 +24,7 @@ module HelpDeskGPG
                            HelpdeskMailMessenger
                            HelpdeskController
                            Issue
+                           IssuesController
                            Journal], 'redmine_contacts_helpdesk_gpg')
 
       IssuesController.send :helper, GpgIssuesHelper
@@ -107,29 +108,25 @@ module HelpDeskGPG
   end
 
   class GpgJournalHelper
-    @journals = {}
 
-    def self.prepareJournal(issue, journal, params)
+    def self.prepare_journal(issue, journal, params)
+      # This is used for outgoing mails.
       return if params.nil?
       return unless params[:gpg_do_encrypt] || params[:gpg_do_sign]
 
-      item = GpgJournal.new
-      item.signed = params[:gpg_do_sign] == '1'
-      item.encrypted = params[:gpg_do_encrypt] == '1'
-      item.journal = journal
-      @journals[issue.id] = item
+      gpg_journal = GpgJournal.new
+      gpg_journal.signed = params[:gpg_do_sign] == '1'
+      gpg_journal.encrypted = params[:gpg_do_encrypt] == '1'
+      # journal is nil <=> we are preparing an initial mail
+      # journal is present <=> we are preparing a response
+      if journal.present?
+        journal.gpg_journal = gpg_journal
+        gpg_journal.journal = journal
+      else
+        issue.gpg_journal = gpg_journal
+        gpg_journal.issue = issue
+      end
     end
 
-    def self.queryJournal(issue_id)
-      @journals[issue_id]
-    end
-
-    def self.saveJournal(issue_id)
-      item = @journals[issue_id]
-      return if item.nil?
-
-      item.save
-      @journals.delete(issue_id)
-    end
   end
 end

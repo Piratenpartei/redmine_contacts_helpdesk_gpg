@@ -75,7 +75,7 @@ module RedmineContactsHelpdeskGpg
         def dispatch_with_gpg
           dispatch_without_gpg
           ref = is_new_issue ? issue : issue.current_journal
-          save_gpg_journal(ref, @gpg_received_options)
+          save_incoming_gpg_journal(ref, @gpg_received_options)
         end
 
         private
@@ -85,10 +85,10 @@ module RedmineContactsHelpdeskGpg
           GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
         end
 
-        def save_gpg_journal(ref, options)
+        def save_incoming_gpg_journal(ref, options)
           return unless options[:signed] || options[:encrypted]
 
-          logger.info "save_gpg_journal: class=#{ref.class}, id=#{ref.id}, sign=#{options[:signed]}, encrypt=#{options[:encrypted]}"
+          logger.info "save_incoming_gpg_journal: class=#{ref.class}, id=#{ref.id}, sign=#{options[:signed]}, encrypt=#{options[:encrypted]}"
           item = GpgJournal.new
           item.signed = options[:signed].present? && options[:signed]
           item.encrypted = options[:encrypted].present? && options[:encrypted]
