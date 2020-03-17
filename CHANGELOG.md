@@ -1,6 +1,12 @@
 Changelog
 =========
 
+20.03.1
+-------
+
+* Fix missing information if initial outgoing mail was encrypted/signed.
+* Validate if encrypted keys are present for initial mails before saving the issue.
+
 20.03.0
 -------
 
