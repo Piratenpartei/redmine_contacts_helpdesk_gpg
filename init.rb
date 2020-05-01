@@ -7,7 +7,7 @@ Redmine::Plugin.register :redmine_contacts_helpdesk_gpg do
   name 'Redmine Contacts Helpdesk GPG'
   author 'darkstarSH / Alphanodes GmbH / Tobias Stenzel'
   description 'This is a plugin for Redmine to use GPG signing/encryption in RedmineUP\'s helpdesk'
-  version '20.03.1'
+  version '20.05.0'
   url 'https://github.com/piratenpartei/redmine_contacts_helpdesk_gpg'
 
   requires_redmine version_or_higher: '4.0'

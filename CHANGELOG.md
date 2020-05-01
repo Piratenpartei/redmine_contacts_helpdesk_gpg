@@ -1,6 +1,11 @@
 Changelog
 =========
 
+20.05.0
+-------
+
+* Add admin setting for path to GPG binaries.
+
 20.03.1
 -------
 
