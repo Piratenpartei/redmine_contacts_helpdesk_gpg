@@ -28,7 +28,7 @@ module RedmineContactsHelpdeskGpg
         def initialize_with_gpg(email_or_raw, options = {})
           # XXX: this is called for sending and receiving of mails, but the encryption / signature parts
           # are only called for incoming mails. This is a bit confusing...
-          init_gpg_settings
+          HelpDeskGPG.init_gpg_settings
           logger = options[:logger]
           target_project = (options[:issue])[:project_id]
           email_or_raw.force_encoding('ASCII-8BIT') if email_or_raw.respond_to?(:force_encoding)
@@ -79,11 +79,6 @@ module RedmineContactsHelpdeskGpg
         end
 
         private
-
-        def init_gpg_settings
-          ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
-          GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-        end
 
         def save_incoming_gpg_journal(ref, options)
           return unless options[:signed] || options[:encrypted]

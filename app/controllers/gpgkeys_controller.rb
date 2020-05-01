@@ -4,11 +4,7 @@ class GpgkeysController < ApplicationController
   layout 'admin'
   before_action :require_admin, except: [:query, :selfcheck]
   before_action :require_login, only: [:query]
-
-  def initialize
-    super()
-    GpgKeys.init_gpg
-  end
+  before_action :init_gpg
 
   def index
     @limit = per_page_option
@@ -61,5 +57,12 @@ class GpgkeysController < ApplicationController
   def destroy
     GpgKeys.remove_key(params[:id])
     redirect_to gpgkeys_path
+  end
+
+  private
+
+  def init_gpg
+    HelpDeskGPG.init_gpg_settings
+    @@hkp = Hkp.new(HelpDeskGPG.keyserver)
   end
 end

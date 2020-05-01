@@ -9,6 +9,7 @@ en:
 
   setting_gpg_keyrings_dir: Directory containing key rings
   setting_gpg_keyserver: URL of public key server
+  setting_gpg_bin_dir: Path to GPG programs
 
   label_key_new: Import a key
   label_keys_refresh: Refresh from Keyserver

@@ -30,8 +30,7 @@ module RedmineContactsHelpdeskGpg
           options[:to_address] = options[:to_address][1..] if options[:to_address].start_with?(',')
 
           logger&.info "gpg_send_mail: begin; issue=#{issue.id}, options=#{options.except(:logger).to_json}"
-          ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
-          GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
+          HelpDeskGPG.init_gpg_settings
 
           logger&.info "gpg_send_mail: call prepare_email_without_gpg; issue=#{issue.id}"
           prepare_email_without_gpg(contact, object, options)

@@ -18,6 +18,10 @@ module HelpDeskGPG
       settings[:gpg_keyserver]
     end
 
+    def bin_dir
+      settings[:gpg_bin_dir]
+    end
+
     def setup
       # Patches
       Additionals.patch(%w[HelpdeskMailContainer
@@ -33,7 +37,20 @@ module HelpDeskGPG
       require_dependency 'hooks/view_issues_hook'
       require_dependency 'hooks/view_layouts_hook'
       require_dependency 'hooks/issues_controller_hook'
+
+      ENV.delete('GPG_AGENT_INFO') # this interfers otherwise with our tests
     end
+
+    def init_gpg_settings
+      ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
+      GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
+      if HelpDeskGPG.bin_dir.present?
+        GPGME::Engine.set_info(0, File.join(HelpDeskGPG.bin_dir, 'gpg'), nil)
+        GPGME::Engine.set_info(1, File.join(HelpDeskGPG.bin_dir, 'gpgsm'), nil)
+        GPGME::Engine.set_info(2, File.join(HelpDeskGPG.bin_dir, 'gpgconf'), nil)
+      end
+    end
+
   end
 
   class Helper
@@ -52,8 +69,7 @@ module HelpDeskGPG
     end
 
     def self.keystoresize
-      ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
-      GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
+      HelpDeskGPG.init_gpg_settings
       ctx = new_context
       pub_length = ctx.keys(nil, false).length
       priv_length = ctx.keys(nil, true).length

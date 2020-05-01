@@ -9,6 +9,7 @@ de:
 
   setting_gpg_keyrings_dir: Verzeichnis der Schlüsselbunde
   setting_gpg_keyserver: Adresse des Schlüsselservers
+  setting_gpg_bin_dir: Pfad zu GPG-Programmen
 
   label_key_new: Schlüssel importieren
   label_keys_refresh: Vom Keyserver aktualisieren

@@ -1,13 +1,4 @@
 class GpgKeys
-  def self.init_gpg
-    ENV.delete('GPG_AGENT_INFO') # this interfers otherwise with our tests
-    ENV['GNUPGHOME'] = HelpDeskGPG.keyrings_dir
-    GPGME::Engine.home_dir = HelpDeskGPG.keyrings_dir
-    @@hkp = Hkp.new(HelpDeskGPG.keyserver)
-
-    Rails.logger.info "Gpgkeys#init_gpg using key rings in: #{HelpDeskGPG.keyrings_dir}"
-    Rails.logger.info "Gpgkeys#init_gpg using key server: #{HelpDeskGPG.keyserver}"
-  end
 
   def self.visible(params)
     keys = if params[:format].present? && params[:format] == 'filter'

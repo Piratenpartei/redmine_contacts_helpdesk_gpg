@@ -16,7 +16,8 @@ Redmine::Plugin.register :redmine_contacts_helpdesk_gpg do
 
   settings default: {
     gpg_keyrings_dir: ENV['GNUPGHOME'] || '~/.gnupg',
-    gpg_keyserver: 'http://pool.sks-keyservers.net:11371'
+    gpg_keyserver: 'http://pool.sks-keyservers.net:11371',
+    gpg_bin_dir: ''
   }, partial: 'settings/gpg_settings'
 
   menu :admin_menu, :gpg_keystore, { controller: 'gpgkeys', action: 'index' }, caption: :label_gpg_keystore, param: nil, html: { class: 'icon' }
